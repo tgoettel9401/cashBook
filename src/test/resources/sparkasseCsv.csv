@@ -1,0 +1,3 @@
+Auftragskonto;Buchungstag;Valutadatum;Buchungstext;Verwendungszweck;Beguenstigter/Zahlungspflichtiger;Kontonummer;BLZ;Betrag;Waehrung;Info
+xxx;02.06.20;01.06.20;Some booking text;Used for this and that purpose;PersonInDebt;3827382718;54050110;-4;;
+xxx;05.04.19;27.04.19;Booking No. 2;Another prupose;AnotherPErson;384291938;29238481;29.88;;
