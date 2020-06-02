@@ -4,16 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
 import tobias.chess.cashBook.exception.EmptyFileException;
 import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.model.CashBookFile;
 import tobias.chess.cashBook.services.CashBookEntryService;
 import tobias.chess.cashBook.services.CsvImportService;
 

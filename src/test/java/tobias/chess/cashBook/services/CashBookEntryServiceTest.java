@@ -6,8 +6,6 @@ import org.mockito.InjectMocks;
 import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
 import tobias.chess.cashBook.model.CashBookEntry;
 
-import javax.money.CurrencyUnit;
-import javax.money.Monetary;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +33,6 @@ class CashBookEntryServiceTest {
         String cashPartnerAccountNumber = "DE4787678473";
         String cashPartnerBankCode = "BAILDE0587";
         Double value = 18.37;
-        CurrencyUnit currency = Monetary.getCurrency("EUR");
 
         CashBookEntryCsv csv = new CashBookEntryCsv();
         csv.setBookingDate(bookingDate);
