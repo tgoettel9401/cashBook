@@ -1,5 +1,6 @@
 package tobias.chess.cashBook.services;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
+import tobias.chess.cashBook.model.CashBookEntry;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -15,6 +15,12 @@ import java.util.List;
 @Service
 public class CsvImportService {
 
+    private final CashBookEntryService cashBookEntryService;
+
+    public CsvImportService(CashBookEntryService cashBookEntryService) {
+        this.cashBookEntryService = cashBookEntryService;
+    }
+
     public CashBookFile saveFile(MultipartFile file) {
         CashBookFile cashBookFile = new CashBookFile();
         cashBookFile.setCreatedAt(LocalDateTime.now());
@@ -29,4 +35,5 @@ public class CsvImportService {
         return objectReader.<CashBookEntryCsv>readValues(file.getInputStream())
                 .readAll();
     }
+
 }

@@ -15,7 +15,6 @@ import tobias.chess.cashBook.services.CsvImportService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,17 +41,14 @@ public class CsvImportController {
         // Import file so that we have it later available later on.
         csvImportService.saveFile(file);
 
-        // Import the CSV-file and transform to DTO.
+        // Extract CashBookEntryDTOs first from file.
         List<CashBookEntryCsv> cashBookEntryDto = csvImportService.createCashBookEntryCsvs(file);
 
-        List<CashBookEntry> cashBookEntries = new ArrayList<>();
-        for (CashBookEntryCsv csv : cashBookEntryDto) {
-            CashBookEntry tempCashBookEntry = cashBookEntryService.createCashBookEntryFromCsv(csv);
-            CashBookEntry cashBookEntry = cashBookEntryService.save(tempCashBookEntry);
-            cashBookEntries.add(cashBookEntry);
-        }
+        // Then transform them to CashBookEntries.
+        List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(cashBookEntryDto);
 
-        return cashBookEntries;
+        // Add the new Entries to the database and return the final entities.
+        return cashBookEntryService.saveAll(cashBookEntries);
     }
 
     @ExceptionHandler (MultipartException.class)
