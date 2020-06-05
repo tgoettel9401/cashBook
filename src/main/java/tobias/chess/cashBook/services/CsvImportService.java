@@ -5,10 +5,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
+import tobias.chess.cashBook.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.model.CashBookFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,11 +29,11 @@ public class CsvImportService {
         return cashBookFile;
     }
 
-    public List<CashBookEntryCsv> createCashBookEntryCsvs(MultipartFile file) throws IOException {
+    public List<SparkasseCsv> createSparkasseCsvs(InputStream inputStream) throws IOException {
         CsvMapper csvMapper = new CsvMapper();
         CsvSchema csvSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
-        ObjectReader objectReader = csvMapper.readerFor(CashBookEntryCsv.class).with(csvSchema);
-        return objectReader.<CashBookEntryCsv>readValues(file.getInputStream())
+        ObjectReader objectReader = csvMapper.readerFor(SparkasseCsv.class).with(csvSchema);
+        return objectReader.<SparkasseCsv>readValues(inputStream)
                 .readAll();
     }
 

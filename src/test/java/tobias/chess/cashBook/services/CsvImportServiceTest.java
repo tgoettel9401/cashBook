@@ -1,6 +1,5 @@
 package tobias.chess.cashBook.services;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,8 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
-import tobias.chess.cashBook.model.CashBookEntry;
+import tobias.chess.cashBook.csvImport.SparkasseCsv;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +49,7 @@ class CsvImportServiceTest {
     @Test
     public void createCashBookEntries_returnsCorrectResults() throws IOException {
 
-        List<CashBookEntryCsv> entriesInService = csvImportService.createCashBookEntryCsvs(multipartFile);
+        List<SparkasseCsv> entriesInService = csvImportService.createSparkasseCsvs(multipartFile.getInputStream());
 
         /*
         Values from CSV-File:
@@ -60,7 +58,7 @@ class CsvImportServiceTest {
         xxx;05.04.19;27.04.19;Booking No. 2;Another prupose;AnotherPErson;384291938;29238481;29.88;;
         */
 
-        CashBookEntryCsv entryOne = entriesInService.get(0);
+        SparkasseCsv entryOne = entriesInService.get(0);
         assertThat (entryOne.getBookingDate()).isEqualTo(LocalDate.of(2020,6,2));
         assertThat (entryOne.getValueDate()).isEqualTo(LocalDate.of(2020,6,1));
         assertThat (entryOne.getBookingText()).isEqualTo("Some booking text");
@@ -70,7 +68,7 @@ class CsvImportServiceTest {
         assertThat (entryOne.getCashPartnerBankCode()).isEqualTo("54050110");
         assertThat (entryOne.getValue()).isEqualTo(-4.00);
 
-        CashBookEntryCsv entryTwo = entriesInService.get(1);
+        SparkasseCsv entryTwo = entriesInService.get(1);
         assertThat (entryTwo.getBookingDate()).isEqualTo(LocalDate.of(2019,4,5));
         assertThat (entryTwo.getValueDate()).isEqualTo(LocalDate.of(2019,4,27));
         assertThat (entryTwo.getBookingText()).isEqualTo("Booking No. 2");

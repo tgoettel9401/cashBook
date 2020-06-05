@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
+import tobias.chess.cashBook.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.model.CashBookEntry;
 import tobias.chess.cashBook.repository.CashBookEntryRepository;
 
@@ -27,7 +27,7 @@ class CashBookEntryServiceTest {
     private CashBookEntryRepository cashBookEntryRepository;
 
     private CashBookEntry cashBookEntry;
-    private CashBookEntryCsv csv;
+    private SparkasseCsv csv;
 
     @BeforeEach
     void setUp() {
@@ -43,16 +43,16 @@ class CashBookEntryServiceTest {
 
     @Test
     public void createCsvFromCashBookEntry_returnsCorrectCashBookEntryCsv() {
-        CashBookEntryCsv createdCsv = cashBookEntryService.createCsvFromCashBookEntry(cashBookEntry);
+        SparkasseCsv createdCsv = cashBookEntryService.createCsvFromCashBookEntry(cashBookEntry);
         assertThat(createdCsv.equals(csv));
     }
 
     @Test
     public void transformCsvToCashBookEntry_importsAllCsvs() {
-        List<CashBookEntryCsv> csvs = Lists.newArrayList();
-        csvs.add(new CashBookEntryCsv());
-        csvs.add(new CashBookEntryCsv());
-        csvs.add(new CashBookEntryCsv());
+        List<SparkasseCsv> csvs = Lists.newArrayList();
+        csvs.add(new SparkasseCsv());
+        csvs.add(new SparkasseCsv());
+        csvs.add(new SparkasseCsv());
 
         List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(csvs);
 
@@ -66,7 +66,7 @@ class CashBookEntryServiceTest {
         entries.add(new CashBookEntry());
         entries.add(new CashBookEntry());
 
-        List<CashBookEntryCsv> csvs = cashBookEntryService.transformCashBookEntriesToCsvs(entries);
+        List<SparkasseCsv> csvs = cashBookEntryService.transformCashBookEntriesToCsvs(entries);
 
         assertThat(csvs.size()).isEqualTo(entries.size());
     }
@@ -95,7 +95,7 @@ class CashBookEntryServiceTest {
         Double value = 18.37;
 
         // Create Csv.
-        csv = new CashBookEntryCsv();
+        csv = new SparkasseCsv();
         csv.setBookingDate(bookingDate);
         csv.setValueDate(valueDate);
         csv.setBookingText(bookingText);
@@ -121,27 +121,27 @@ class CashBookEntryServiceTest {
     @Test
     public void filterCsvsToAdd_filtersCorrectCsvs() {
         List<CashBookEntry> databaseCashBookEntries = Lists.newArrayList();
-        List<CashBookEntryCsv> givenCsvs = Lists.newArrayList();
-        List<CashBookEntryCsv> databaseCsvs = Lists.newArrayList();
+        List<SparkasseCsv> givenCsvs = Lists.newArrayList();
+        List<SparkasseCsv> databaseCsvs = Lists.newArrayList();
 
         // CSV 1 is part of both.
-        CashBookEntryCsv csv1 = new CashBookEntryCsv();
+        SparkasseCsv csv1 = new SparkasseCsv();
         csv1.setBookingDate(LocalDate.of(2020,6,1));
         givenCsvs.add(csv1);
         databaseCsvs.add(csv1);
 
         // CSV 2 is only part of given Csvs
-        CashBookEntryCsv csv2 = new CashBookEntryCsv();
+        SparkasseCsv csv2 = new SparkasseCsv();
         csv2.setBookingDate(LocalDate.of(2020,6,2));
         givenCsvs.add(csv2);
 
         // CSV 3 is only part of database Csvs
-        CashBookEntryCsv csv3 = new CashBookEntryCsv();
+        SparkasseCsv csv3 = new SparkasseCsv();
         csv3.setBookingDate(LocalDate.of(2020,6,3));
         databaseCsvs.add(csv3);
 
         // CSV 4 is part of both.
-        CashBookEntryCsv csv4 = new CashBookEntryCsv();
+        SparkasseCsv csv4 = new SparkasseCsv();
         csv4.setBookingDate(LocalDate.of(2020,6,4));
         givenCsvs.add(csv4);
         databaseCsvs.add(csv4);
@@ -149,7 +149,7 @@ class CashBookEntryServiceTest {
         Mockito.doReturn(databaseCashBookEntries).when(cashBookEntryService).findAll();
         Mockito.doReturn(databaseCsvs).when(cashBookEntryService).transformCashBookEntriesToCsvs(
                 databaseCashBookEntries);
-        List<CashBookEntryCsv> returnedCsvs = cashBookEntryService.filterCsvsToAdd(givenCsvs);
+        List<SparkasseCsv> returnedCsvs = cashBookEntryService.filterCsvsToAdd(givenCsvs);
 
         assertThat(returnedCsvs).hasSize(1);
         assertThat(returnedCsvs).contains(csv2);

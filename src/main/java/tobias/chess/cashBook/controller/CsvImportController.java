@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
-import tobias.chess.cashBook.csvImport.CashBookEntryCsv;
+import tobias.chess.cashBook.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.exception.EmptyFileException;
 import tobias.chess.cashBook.model.CashBookEntry;
 import tobias.chess.cashBook.services.CashBookEntryService;
@@ -42,7 +42,7 @@ public class CsvImportController {
         csvImportService.saveFile(file);
 
         // Extract CashBookEntryDTOs first from file.
-        List<CashBookEntryCsv> cashBookEntryDto = csvImportService.createCashBookEntryCsvs(file);
+        List<SparkasseCsv> cashBookEntryDto = csvImportService.createSparkasseCsvs(file.getInputStream());
 
         // Then transform them to CashBookEntries.
         List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(cashBookEntryDto);

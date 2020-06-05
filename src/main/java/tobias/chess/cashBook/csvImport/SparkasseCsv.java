@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class CashBookEntryCsv {
+public class SparkasseCsv {
 
     @JsonProperty("Auftragskonto")
     private String account;
