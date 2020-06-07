@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import tobias.chess.cashBook.model.CashBook;
-import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.repository.CashBookEntryRepository;
-import tobias.chess.cashBook.repository.CashBookRepository;
+import tobias.chess.cashBook.business.cashBook.CashBookEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryRepository;
+import tobias.chess.cashBook.business.cashBook.CashBookRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,55 +38,55 @@ public class Initialization implements InitializingBean {
         List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
 
         if (activeProfiles.contains("db-init")) {
-            List<CashBook> cashBooks = getInitialCashBooks();
-            List<CashBookEntry> cashBookEntries = getInitialCashBookEntries(cashBooks.get(0));
-            logger.info("Database-Initialization has been performed. Inserted " + cashBooks.size() + " Cash-Books" +
-                    "and " + cashBookEntries.size() + " entries (all for Cash-Book " + cashBooks.get(0).getName() + ")");
+            List<CashBookEntity> cashBookEntities = getInitialCashBooks();
+            List<CashBookEntryEntity> cashBookEntries = getInitialCashBookEntries(cashBookEntities.get(0));
+            logger.info("Database-Initialization has been performed. Inserted " + cashBookEntities.size() + " Cash-Books" +
+                    "and " + cashBookEntries.size() + " entries (all for Cash-Book " + cashBookEntities.get(0).getName() + ")");
         }
 
     }
 
-    private List<CashBook> getInitialCashBooks() {
-        CashBook cashBook1 = new CashBook();
-        cashBook1.setAccountNumber("DE48293837817");
-        cashBook1.setName("CashBook-No.1");
-        cashBookRepository.save(cashBook1);
+    private List<CashBookEntity> getInitialCashBooks() {
+        CashBookEntity cashBookEntity1 = new CashBookEntity();
+        cashBookEntity1.setAccountNumber("DE48293837817");
+        cashBookEntity1.setName("CashBook-No.1");
+        cashBookRepository.save(cashBookEntity1);
 
-        CashBook cashBook2 = new CashBook();
-        cashBook2.setAccountNumber("DE85795687954");
-        cashBook2.setName("CashBook-No.2");
-        cashBookRepository.save(cashBook2);
+        CashBookEntity cashBookEntity2 = new CashBookEntity();
+        cashBookEntity2.setAccountNumber("DE85795687954");
+        cashBookEntity2.setName("CashBook-No.2");
+        cashBookRepository.save(cashBookEntity2);
 
-        return Lists.newArrayList(cashBook1, cashBook2);
+        return Lists.newArrayList(cashBookEntity1, cashBookEntity2);
     }
 
-    private List<CashBookEntry> getInitialCashBookEntries(CashBook cashBook) {
-        CashBookEntry cashBookEntry1 = new CashBookEntry();
-        cashBookEntry1.setCashBook(cashBook);
-        cashBookEntry1.setBookingDate(LocalDate.of(2020, 6,20));
-        cashBookEntry1.setBookingText("This is the booking-text!");
-        cashBookEntry1.setValueDate(LocalDate.of(2020,6,17));
-        cashBookEntry1.setCashPartnerName("CashPartnerName");
-        cashBookEntry1.setCashPartnerAccountNumber("DE83912938347");
-        cashBookEntry1.setCashPartnerBankCode("GENODE761DZE");
-        cashBookEntry1.setPurpose("Important stuff");
-        cashBookEntry1.setValue(17.20);
-        cashBookEntry1.setCreatedAt(LocalDateTime.now());
-        cashBookEntryRepository.save(cashBookEntry1);
+    private List<CashBookEntryEntity> getInitialCashBookEntries(CashBookEntity cashBookEntity) {
+        CashBookEntryEntity cashBookEntryEntity1 = new CashBookEntryEntity();
+        cashBookEntryEntity1.setCashBookEntity(cashBookEntity);
+        cashBookEntryEntity1.setBookingDate(LocalDate.of(2020, 6,20));
+        cashBookEntryEntity1.setBookingText("This is the booking-text!");
+        cashBookEntryEntity1.setValueDate(LocalDate.of(2020,6,17));
+        cashBookEntryEntity1.setCashPartnerName("CashPartnerName");
+        cashBookEntryEntity1.setCashPartnerAccountNumber("DE83912938347");
+        cashBookEntryEntity1.setCashPartnerBankCode("GENODE761DZE");
+        cashBookEntryEntity1.setPurpose("Important stuff");
+        cashBookEntryEntity1.setValue(17.20);
+        cashBookEntryEntity1.setCreatedAt(LocalDateTime.now());
+        cashBookEntryRepository.save(cashBookEntryEntity1);
 
-        CashBookEntry cashBookEntry2 = new CashBookEntry();
-        cashBookEntry2.setCashBook(cashBook);
-        cashBookEntry2.setBookingDate(LocalDate.of(2020, 6,20));
-        cashBookEntry2.setBookingText("Another text added to the booking");
-        cashBookEntry2.setValueDate(LocalDate.of(2020,5,9));
-        cashBookEntry2.setCashPartnerName("CashPartnerName");
-        cashBookEntry2.setCashPartnerAccountNumber("DE83912938347");
-        cashBookEntry2.setCashPartnerBankCode("GENODE761DZE");
-        cashBookEntry2.setPurpose("This is much more important than the other one!");
-        cashBookEntry2.setValue(39.55);
-        cashBookEntry2.setCreatedAt(LocalDateTime.now());
-        cashBookEntryRepository.save(cashBookEntry2);
+        CashBookEntryEntity cashBookEntryEntity2 = new CashBookEntryEntity();
+        cashBookEntryEntity2.setCashBookEntity(cashBookEntity);
+        cashBookEntryEntity2.setBookingDate(LocalDate.of(2020, 6,20));
+        cashBookEntryEntity2.setBookingText("Another text added to the booking");
+        cashBookEntryEntity2.setValueDate(LocalDate.of(2020,5,9));
+        cashBookEntryEntity2.setCashPartnerName("CashPartnerName");
+        cashBookEntryEntity2.setCashPartnerAccountNumber("DE83912938347");
+        cashBookEntryEntity2.setCashPartnerBankCode("GENODE761DZE");
+        cashBookEntryEntity2.setPurpose("This is much more important than the other one!");
+        cashBookEntryEntity2.setValue(39.55);
+        cashBookEntryEntity2.setCreatedAt(LocalDateTime.now());
+        cashBookEntryRepository.save(cashBookEntryEntity2);
 
-        return Lists.newArrayList(cashBookEntry1, cashBookEntry2);
+        return Lists.newArrayList(cashBookEntryEntity1, cashBookEntryEntity2);
     }
 }

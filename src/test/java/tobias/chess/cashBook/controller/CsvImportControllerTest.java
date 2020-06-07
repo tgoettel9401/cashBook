@@ -5,17 +5,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import tobias.chess.cashBook.model.CashBook;
-import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.services.CashBookEntryService;
-import tobias.chess.cashBook.services.CashBookService;
-import tobias.chess.cashBook.services.CsvImportService;
-
-import java.io.InputStream;
-import java.util.List;
+import tobias.chess.cashBook.business.csvImport.CsvImportController;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
+import tobias.chess.cashBook.business.csvImport.CsvImportService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

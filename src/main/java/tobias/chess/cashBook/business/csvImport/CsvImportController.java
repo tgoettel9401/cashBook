@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.controller;
+package tobias.chess.cashBook.business.csvImport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,11 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
-import tobias.chess.cashBook.csvImport.SparkasseCsv;
-import tobias.chess.cashBook.exception.EmptyFileException;
-import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.services.CashBookEntryService;
-import tobias.chess.cashBook.services.CsvImportService;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class CsvImportController {
     }
 
     @PostMapping("files")
-    public List<CashBookEntry> uploadFile (@RequestParam("file") MultipartFile file) throws EmptyFileException, IOException {
+    public List<CashBookEntryEntity> uploadFile (@RequestParam("file") MultipartFile file) throws EmptyFileException, IOException {
         logger.info("Received request on /files");
 
         if (file.isEmpty()) {
@@ -45,7 +42,7 @@ public class CsvImportController {
         List<SparkasseCsv> cashBookEntryDto = csvImportService.createSparkasseCsvs(file.getInputStream());
 
         // Then transform them to CashBookEntries.
-        List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(cashBookEntryDto);
+        List<CashBookEntryEntity> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(cashBookEntryDto);
 
         // Add the new Entries to the database and return the final entities.
         return cashBookEntryService.saveAll(cashBookEntries);

@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.csvImport;
+package tobias.chess.cashBook.business.csvImport;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

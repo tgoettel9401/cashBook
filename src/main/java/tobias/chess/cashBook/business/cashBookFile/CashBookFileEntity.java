@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.model;
+package tobias.chess.cashBook.business.cashBookFile;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class CashBookFile {
+public class CashBookFileEntity {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)

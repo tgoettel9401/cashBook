@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.services;
+package tobias.chess.cashBook.business.cashBookFile;
 
 import org.springframework.stereotype.Service;
 

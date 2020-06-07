@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.exception;
+package tobias.chess.cashBook.business.csvImport;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

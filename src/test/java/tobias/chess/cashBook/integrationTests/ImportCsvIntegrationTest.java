@@ -1,6 +1,5 @@
 package tobias.chess.cashBook.integrationTests;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,20 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import tobias.chess.cashBook.model.CashBook;
-import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.services.CashBookEntryService;
-import tobias.chess.cashBook.services.CashBookService;
+import tobias.chess.cashBook.business.cashBook.CashBookEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
+import tobias.chess.cashBook.business.cashBook.CashBookService;
 
 import javax.servlet.ServletContext;
 import java.io.InputStream;
@@ -29,7 +23,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -78,15 +71,15 @@ public class ImportCsvIntegrationTest {
                 .andExpect(status().isOk());
 
         // The size of CashBooks should be increased by 1.
-        List<CashBook> cashBooks = cashBookService.findAll();
-        assertThat(cashBooks).hasSize(initialCashBookSize + 1);
+        List<CashBookEntity> cashBookEntities = cashBookService.findAll();
+        assertThat(cashBookEntities).hasSize(initialCashBookSize + 1);
 
         // The size of CashBookEntries should be increased by 2.
-        List<CashBookEntry> cashBookEntries = cashBookEntryService.findAll();
+        List<CashBookEntryEntity> cashBookEntries = cashBookEntryService.findAll();
         assertThat(cashBookEntries).hasSize(initialCashBookEntriesSize + 2);
 
         // It is possible to access the Getter-endpoints of CashBooks.
-        Long cashBookId = cashBooks.get(1).getId();
+        Long cashBookId = cashBookEntities.get(1).getId();
         this.mockMvc.perform(get("/cashBooks"))
                 .andExpect(status().isOk());
         this.mockMvc.perform(get("/cashBooks/" + cashBookId))

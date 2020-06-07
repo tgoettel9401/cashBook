@@ -7,9 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import tobias.chess.cashBook.csvImport.SparkasseCsv;
-import tobias.chess.cashBook.model.CashBookEntry;
-import tobias.chess.cashBook.repository.CashBookEntryRepository;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-class CashBookEntryServiceTest {
+class CashBookEntryEntityServiceTest {
 
     @InjectMocks
     @Spy
@@ -26,7 +27,7 @@ class CashBookEntryServiceTest {
     @Mock
     private CashBookEntryRepository cashBookEntryRepository;
 
-    private CashBookEntry cashBookEntry;
+    private CashBookEntryEntity cashBookEntryEntity;
     private SparkasseCsv csv;
 
     @BeforeEach
@@ -37,13 +38,13 @@ class CashBookEntryServiceTest {
 
     @Test
     public void createCashBookEntryFromCsv_returnsCorrectCashBookEntry() {
-        CashBookEntry createdCashBookEntry = cashBookEntryService.createCashBookEntryFromCsv(csv);
-        assertThat(createdCashBookEntry.equals(cashBookEntry));
+        CashBookEntryEntity createdCashBookEntryEntity = cashBookEntryService.createCashBookEntryFromCsv(csv);
+        assertThat(createdCashBookEntryEntity.equals(cashBookEntryEntity));
     }
 
     @Test
     public void createCsvFromCashBookEntry_returnsCorrectCashBookEntryCsv() {
-        SparkasseCsv createdCsv = cashBookEntryService.createCsvFromCashBookEntry(cashBookEntry);
+        SparkasseCsv createdCsv = cashBookEntryService.createCsvFromCashBookEntry(cashBookEntryEntity);
         assertThat(createdCsv.equals(csv));
     }
 
@@ -54,17 +55,17 @@ class CashBookEntryServiceTest {
         csvs.add(new SparkasseCsv());
         csvs.add(new SparkasseCsv());
 
-        List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(csvs);
+        List<CashBookEntryEntity> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(csvs);
 
         assertThat(cashBookEntries.size()).isEqualTo(csvs.size());
     }
 
     @Test
     public void transformCashBookEntryToCsvs_importsAllEntries() {
-        List<CashBookEntry> entries = Lists.newArrayList();
-        entries.add(new CashBookEntry());
-        entries.add(new CashBookEntry());
-        entries.add(new CashBookEntry());
+        List<CashBookEntryEntity> entries = Lists.newArrayList();
+        entries.add(new CashBookEntryEntity());
+        entries.add(new CashBookEntryEntity());
+        entries.add(new CashBookEntryEntity());
 
         List<SparkasseCsv> csvs = cashBookEntryService.transformCashBookEntriesToCsvs(entries);
 
@@ -73,12 +74,12 @@ class CashBookEntryServiceTest {
 
     @Test
     public void findAll_returnsAll() {
-        List<CashBookEntry> cashBookEntries = Lists.newArrayList();
-        cashBookEntries.add(new CashBookEntry());
-        cashBookEntries.add(new CashBookEntry());
+        List<CashBookEntryEntity> cashBookEntries = Lists.newArrayList();
+        cashBookEntries.add(new CashBookEntryEntity());
+        cashBookEntries.add(new CashBookEntryEntity());
         Mockito.when(cashBookEntryRepository.findAll()).thenReturn(cashBookEntries);
 
-        List<CashBookEntry> returnedCashBookEntries = cashBookEntryService.findAll();
+        List<CashBookEntryEntity> returnedCashBookEntries = cashBookEntryService.findAll();
         assertThat(returnedCashBookEntries.equals(cashBookEntries));
     }
 
@@ -106,21 +107,21 @@ class CashBookEntryServiceTest {
         csv.setValue(value);
 
         // Create CashBookEntry
-        cashBookEntry = new CashBookEntry();
-        cashBookEntry.setBookingDate(bookingDate);
-        cashBookEntry.setValueDate(valueDate);
-        cashBookEntry.setBookingText(bookingText);
-        cashBookEntry.setPurpose(purpose);
-        cashBookEntry.setCashPartnerName(cashPartnerName);
-        cashBookEntry.setCashPartnerAccountNumber(cashPartnerAccountNumber);
-        cashBookEntry.setCashPartnerBankCode(cashPartnerBankCode);
-        cashBookEntry.setValue(value);
+        cashBookEntryEntity = new CashBookEntryEntity();
+        cashBookEntryEntity.setBookingDate(bookingDate);
+        cashBookEntryEntity.setValueDate(valueDate);
+        cashBookEntryEntity.setBookingText(bookingText);
+        cashBookEntryEntity.setPurpose(purpose);
+        cashBookEntryEntity.setCashPartnerName(cashPartnerName);
+        cashBookEntryEntity.setCashPartnerAccountNumber(cashPartnerAccountNumber);
+        cashBookEntryEntity.setCashPartnerBankCode(cashPartnerBankCode);
+        cashBookEntryEntity.setValue(value);
 
     }
 
     @Test
     public void filterCsvsToAdd_filtersCorrectCsvs() {
-        List<CashBookEntry> databaseCashBookEntries = Lists.newArrayList();
+        List<CashBookEntryEntity> databaseCashBookEntries = Lists.newArrayList();
         List<SparkasseCsv> givenCsvs = Lists.newArrayList();
         List<SparkasseCsv> databaseCsvs = Lists.newArrayList();
 

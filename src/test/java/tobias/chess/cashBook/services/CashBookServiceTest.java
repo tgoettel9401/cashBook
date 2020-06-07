@@ -7,9 +7,10 @@ import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import tobias.chess.cashBook.csvImport.SparkasseCsv;
-import tobias.chess.cashBook.model.CashBook;
-import tobias.chess.cashBook.repository.CashBookRepository;
+import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
+import tobias.chess.cashBook.business.cashBook.CashBookEntity;
+import tobias.chess.cashBook.business.cashBook.CashBookRepository;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ class CashBookServiceTest {
     private CashBookRepository cashBookRepository;
 
     private List<SparkasseCsv> csvs;
-    private List<CashBook> correctCashBooks;
+    private List<CashBookEntity> correctCashBookEntities;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +42,7 @@ class CashBookServiceTest {
         csv.setAccount("DE73828167328");
 
         // Create the CashBook
-        CashBook cashBook = cashBookService.createFromCsv(csv);
+        CashBookEntity cashBookEntity = cashBookService.createFromCsv(csv);
     }
 
 }

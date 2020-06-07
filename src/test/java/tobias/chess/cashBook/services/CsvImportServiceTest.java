@@ -8,7 +8,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import tobias.chess.cashBook.csvImport.SparkasseCsv;
+import tobias.chess.cashBook.business.csvImport.CsvImportService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
 import java.io.IOException;
 import java.io.InputStream;
