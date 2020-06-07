@@ -1,14 +1,16 @@
 package tobias.chess.cashBook.business.cashBookEntry;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tobias.chess.cashBook.business.cashBook.CashBook;
-import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +67,11 @@ public class CashBookEntryService {
         cashBook = cashBookOptional
                 .orElseGet(() -> cashBookService.createFromCsv(csvEntry));
 
+        // Remove the SVWZ+ from the purpose.
+        if (csvEntry.getPurpose().startsWith("SVWZ+")) {
+            csvEntry.setPurpose(csvEntry.getPurpose().replace("SVWZ+", ""));
+        }
+
         // Add the CashBookEntry to the CashBook.
         CashBookEntry cashBookEntry = new CashBookEntry();
         cashBookEntry.setCashBook(cashBook);
@@ -78,6 +85,55 @@ public class CashBookEntryService {
         cashBookEntry.setValue(csvEntry.getValue());
         cashBookEntry.setCreatedAt(LocalDateTime.now());
         return cashBookEntry;
+    }
+
+    public List<CashBookEntryDto> createCashBookEntryDtosForCashBook(CashBook cashBook) {
+
+        // First find all CashBookEntries for this CashBook
+        List<CashBookEntry> cashBookEntries = findAllByCashBook(cashBook);
+
+        // Sort the CashBookEntries by valueDate first, then bookingDate and finally descending ID (descending because
+        // the original CashBookEntries have been delivered in incorrect order.
+        cashBookEntries.sort(Comparator
+                .comparing(CashBookEntry::getValueDate)
+                .thenComparing(CashBookEntry::getBookingDate)
+                .thenComparing(CashBookEntry::getId)
+        );
+
+        // Create position-sequence as well as income-sequence and expense-sequence.
+        List<CashBookEntryDto> dtos = Lists.newArrayList();
+        int positionNumber = 1;
+        int incomeNumber = 1;
+        int expenseNumber = 1;
+        for (CashBookEntry entry : cashBookEntries) {
+            CashBookEntryDto dto = new CashBookEntryDto();
+            dto.setId(entry.getId());
+            dto.setTitle(entry.getPurpose());
+            dto.setValueDate(entry.getValueDate());
+            if (entry.getValue() >= 0) { // Counts as Income.
+                dto.setIncome(Math.abs(entry.getValue()));
+                dto.setExpense(0.00);
+                dto.setIncomeExpensePosition("E" + Strings.padStart(Integer.toString(incomeNumber), 3, '0'));
+                incomeNumber++;
+            }
+            else { // Counts as Expense.
+                dto.setIncome(0.00);
+                dto.setExpense(Math.abs(entry.getValue()));
+                dto.setIncomeExpensePosition("A" + Strings.padStart(Integer.toString(expenseNumber), 3, '0'));
+                expenseNumber++;
+            }
+            dto.setPosition(positionNumber);
+            dto.setReceiverSender(entry.getCashPartnerName());
+            positionNumber++;
+            dtos.add(dto);
+        }
+
+        return dtos;
+
+    }
+
+    private List<CashBookEntry> findAllByCashBook(CashBook cashBook) {
+        return cashBookEntryRepository.findAllByCashBook(cashBook);
     }
 
     @Transactional

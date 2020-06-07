@@ -32,6 +32,10 @@ public class CashBookService {
         return cashBookRepository.save(cashBook);
     }
 
+    public Optional<CashBook> findById(Long id) {
+        return cashBookRepository.findById(id);
+    }
+
     public Optional<CashBook> findByAccountNumber(String accountNumber) {
         return cashBookRepository.findByAccountNumber(accountNumber);
     }

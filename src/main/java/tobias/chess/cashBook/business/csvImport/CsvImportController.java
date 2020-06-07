@@ -15,7 +15,9 @@ import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class CsvImportController {
@@ -33,19 +35,25 @@ public class CsvImportController {
 
     @PostMapping("files")
     public List<CashBookEntry> uploadFile(@RequestParam("file") MultipartFile file)
-            throws EmptyFileException, IOException {
+            throws EmptyFileException, IOException, MultipleCashBooksException {
         logger.info("Received request on /files");
 
         if (file.isEmpty()) {
             throw new EmptyFileException();
         }
 
-        // Import file so that we have it later available later on.
-        csvImportService.saveFile(file);
-
         // Extract CashBookEntryDTOs first from file.
         List<SparkasseCsv> cashBookEntryDto =
                 csvImportService.createSparkasseCsvs(file.getInputStream());
+
+        // Check that the entries all have the same Account-Number.
+        List<String> accountNumbers = cashBookEntryDto.stream().map(SparkasseCsv::getAccount).distinct().collect(Collectors.toList());
+        if (accountNumbers.size() > 1) {
+            throw new MultipleCashBooksException();
+        }
+
+        // Import file so that we have it later available later on.
+        csvImportService.saveFile(file);
 
         // Then transform them to CashBookEntries.
         List<CashBookEntry> cashBookEntries =
