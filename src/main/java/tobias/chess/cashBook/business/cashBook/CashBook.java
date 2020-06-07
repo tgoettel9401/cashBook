@@ -12,7 +12,7 @@ import java.util.List;
 public class CashBook {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
@@ -21,7 +21,7 @@ public class CashBook {
     private String name;
 
     @ToString.Exclude
-    @OneToMany (mappedBy = "cashBook")
+    @OneToMany(mappedBy = "cashBook")
     private List<CashBookEntry> cashBookEntries;
 
 }

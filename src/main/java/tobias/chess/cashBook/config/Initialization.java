@@ -9,9 +9,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBook.CashBookRepository;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryRepository;
-import tobias.chess.cashBook.business.cashBook.CashBookRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,11 +40,15 @@ public class Initialization implements InitializingBean {
         if (activeProfiles.contains("db-init")) {
             List<CashBook> cashBookEntities = getInitialCashBooks();
             List<CashBookEntry> cashBookEntries = getInitialCashBookEntries(cashBookEntities.get(0));
-            logger.info("Database-Initialization has been performed. Inserted " + cashBookEntities.size()
-                    + " Cash-Books and " + cashBookEntries.size() + " entries (all for Cash-Book "
-                    + cashBookEntities.get(0).getName() + ")");
+            logger.info(
+                    "Database-Initialization has been performed. Inserted "
+                            + cashBookEntities.size()
+                            + " Cash-Books and "
+                            + cashBookEntries.size()
+                            + " entries (all for Cash-Book "
+                            + cashBookEntities.get(0).getName()
+                            + ")");
         }
-
     }
 
     private List<CashBook> getInitialCashBooks() {
@@ -64,9 +68,9 @@ public class Initialization implements InitializingBean {
     private List<CashBookEntry> getInitialCashBookEntries(CashBook cashBook) {
         CashBookEntry cashBookEntry1 = new CashBookEntry();
         cashBookEntry1.setCashBook(cashBook);
-        cashBookEntry1.setBookingDate(LocalDate.of(2020, 6,20));
+        cashBookEntry1.setBookingDate(LocalDate.of(2020, 6, 20));
         cashBookEntry1.setBookingText("This is the booking-text!");
-        cashBookEntry1.setValueDate(LocalDate.of(2020,6,17));
+        cashBookEntry1.setValueDate(LocalDate.of(2020, 6, 17));
         cashBookEntry1.setCashPartnerName("CashPartnerName");
         cashBookEntry1.setCashPartnerAccountNumber("DE83912938347");
         cashBookEntry1.setCashPartnerBankCode("GENODE761DZE");
@@ -77,9 +81,9 @@ public class Initialization implements InitializingBean {
 
         CashBookEntry cashBookEntry2 = new CashBookEntry();
         cashBookEntry2.setCashBook(cashBook);
-        cashBookEntry2.setBookingDate(LocalDate.of(2020, 6,20));
+        cashBookEntry2.setBookingDate(LocalDate.of(2020, 6, 20));
         cashBookEntry2.setBookingText("Another text added to the booking");
-        cashBookEntry2.setValueDate(LocalDate.of(2020,5,9));
+        cashBookEntry2.setValueDate(LocalDate.of(2020, 5, 9));
         cashBookEntry2.setCashPartnerName("CashPartnerName");
         cashBookEntry2.setCashPartnerAccountNumber("DE83912938347");
         cashBookEntry2.setCashPartnerBankCode("GENODE761DZE");
