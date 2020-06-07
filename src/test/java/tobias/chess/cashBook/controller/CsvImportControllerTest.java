@@ -5,13 +5,19 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import tobias.chess.cashBook.model.CashBookFile;
+import tobias.chess.cashBook.model.CashBook;
+import tobias.chess.cashBook.model.CashBookEntry;
 import tobias.chess.cashBook.services.CashBookEntryService;
+import tobias.chess.cashBook.services.CashBookService;
 import tobias.chess.cashBook.services.CsvImportService;
 
-import static org.mockito.Mockito.mock;
+import java.io.InputStream;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,9 +41,6 @@ class CsvImportControllerTest {
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test.csv", "text/csv",
                 "Spring Framework".getBytes());
-
-        CashBookFile importedFile = mock(CashBookFile.class);
-        //when(csvImportService.save(multipartFile)).thenReturn(importedFile);
 
         this.mockMvc.perform(multipart("/files").file(multipartFile))
                 .andExpect(status().isOk())

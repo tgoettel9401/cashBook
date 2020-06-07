@@ -3,22 +3,28 @@ package tobias.chess.cashBook.services;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tobias.chess.cashBook.csvImport.SparkasseCsv;
+import tobias.chess.cashBook.exception.CashBookNotFoundException;
+import tobias.chess.cashBook.model.CashBook;
 import tobias.chess.cashBook.model.CashBookEntry;
 import tobias.chess.cashBook.repository.CashBookEntryRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CashBookEntryService {
 
     private final CashBookEntryRepository cashBookEntryRepository;
+    private final CashBookService cashBookService;
 
     @Autowired
-    public CashBookEntryService(CashBookEntryRepository cashBookEntryRepository) {
+    public CashBookEntryService(CashBookEntryRepository cashBookEntryRepository, CashBookService cashBookService) {
         this.cashBookEntryRepository = cashBookEntryRepository;
+        this.cashBookService = cashBookService;
     }
 
     /**
@@ -52,7 +58,18 @@ public class CashBookEntryService {
     }
 
     public CashBookEntry createCashBookEntryFromCsv(SparkasseCsv csvEntry) {
+
+        // First find the CashBook for the csv
+        CashBook cashBook;
+        Optional<CashBook> cashBookOptional = cashBookService.findByAccountNumber(csvEntry.getAccount());
+
+        // Either get the already existing CashBook or create a new one.
+        cashBook = cashBookOptional
+                .orElseGet(() -> cashBookService.createFromCsv(csvEntry));
+
+        // Add the CashBookEntry to the CashBook. 
         CashBookEntry cashBookEntry = new CashBookEntry();
+        cashBookEntry.setCashBook(cashBook);
         cashBookEntry.setBookingDate(csvEntry.getBookingDate());
         cashBookEntry.setValueDate(csvEntry.getValueDate());
         cashBookEntry.setBookingText(csvEntry.getBookingText());
@@ -65,6 +82,7 @@ public class CashBookEntryService {
         return cashBookEntry;
     }
 
+    @Transactional
     public List<CashBookEntry> transformCsvsToCashBookEntries(List<SparkasseCsv> csvs) {
         List<CashBookEntry> cashBookEntries = Lists.newArrayList();
         csvs.forEach(csv -> cashBookEntries.add(createCashBookEntryFromCsv(csv)));

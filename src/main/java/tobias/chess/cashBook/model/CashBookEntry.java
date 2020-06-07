@@ -2,9 +2,7 @@ package tobias.chess.cashBook.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,8 +11,11 @@ import java.time.LocalDateTime;
 public class CashBookEntry {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    private CashBook cashBook;
 
     private LocalDate bookingDate;
     private LocalDate valueDate;
