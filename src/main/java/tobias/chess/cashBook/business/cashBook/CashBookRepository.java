@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @Repository
-public interface CashBookRepository extends JpaRepository<CashBookEntity, Long> {
-    Optional<CashBookEntity> findByAccountNumber(String accountNumber);
+public interface CashBookRepository extends JpaRepository<CashBook, Long> {
+    Optional<CashBook> findByAccountNumber(String accountNumber);
 }

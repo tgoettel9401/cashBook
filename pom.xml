@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>tobias.chess</groupId>
-	<artifactId>cashBookEntity</artifactId>
+	<artifactId>cashBook</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cashBookEntity</name>
+	<name>cashBook</name>
 	<description>CashBook for Schachjugend Pfalz</description>
 
 	<properties>

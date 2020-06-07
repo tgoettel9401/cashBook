@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
-import tobias.chess.cashBook.business.cashBookFile.CashBookFileEntity;
+import tobias.chess.cashBook.business.cashBookFile.CashBookFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +22,11 @@ public class CsvImportService {
         this.cashBookEntryService = cashBookEntryService;
     }
 
-    public CashBookFileEntity saveFile(MultipartFile file) {
-        CashBookFileEntity cashBookFileEntity = new CashBookFileEntity();
-        cashBookFileEntity.setCreatedAt(LocalDateTime.now());
-        cashBookFileEntity.setFileName(file.getName());
-        return cashBookFileEntity;
+    public CashBookFile saveFile(MultipartFile file) {
+        CashBookFile cashBookFile = new CashBookFile();
+        cashBookFile.setCreatedAt(LocalDateTime.now());
+        cashBookFile.setFileName(file.getName());
+        return cashBookFile;
     }
 
     public List<SparkasseCsv> createSparkasseCsvs(InputStream inputStream) throws IOException {

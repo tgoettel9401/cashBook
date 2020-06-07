@@ -2,14 +2,14 @@ package tobias.chess.cashBook.business.cashBook;
 
 import lombok.Data;
 import lombok.ToString;
-import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
-public class CashBookEntity {
+public class CashBook {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -22,6 +22,6 @@ public class CashBookEntity {
 
     @ToString.Exclude
     @OneToMany (mappedBy = "cashBook")
-    private List<CashBookEntryEntity> cashBookEntries;
+    private List<CashBookEntry> cashBookEntries;
 
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class CashBookFileEntity {
+public class CashBookFile {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)

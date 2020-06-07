@@ -12,8 +12,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import tobias.chess.cashBook.business.cashBook.CashBookEntity;
-import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryEntity;
+import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
 
@@ -71,11 +71,11 @@ public class ImportCsvIntegrationTest {
                 .andExpect(status().isOk());
 
         // The size of CashBooks should be increased by 1.
-        List<CashBookEntity> cashBookEntities = cashBookService.findAll();
+        List<CashBook> cashBookEntities = cashBookService.findAll();
         assertThat(cashBookEntities).hasSize(initialCashBookSize + 1);
 
         // The size of CashBookEntries should be increased by 2.
-        List<CashBookEntryEntity> cashBookEntries = cashBookEntryService.findAll();
+        List<CashBookEntry> cashBookEntries = cashBookEntryService.findAll();
         assertThat(cashBookEntries).hasSize(initialCashBookEntriesSize + 2);
 
         // It is possible to access the Getter-endpoints of CashBooks.
