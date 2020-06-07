@@ -40,8 +40,9 @@ public class Initialization implements InitializingBean {
         if (activeProfiles.contains("db-init")) {
             List<CashBook> cashBookEntities = getInitialCashBooks();
             List<CashBookEntry> cashBookEntries = getInitialCashBookEntries(cashBookEntities.get(0));
-            logger.info("Database-Initialization has been performed. Inserted " + cashBookEntities.size() + " Cash-Books" +
-                    "and " + cashBookEntries.size() + " entries (all for Cash-Book " + cashBookEntities.get(0).getName() + ")");
+            logger.info("Database-Initialization has been performed. Inserted " + cashBookEntities.size()
+                    + " Cash-Books and " + cashBookEntries.size() + " entries (all for Cash-Book "
+                    + cashBookEntities.get(0).getName() + ")");
         }
 
     }
