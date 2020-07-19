@@ -20,8 +20,8 @@ public class CashBook {
 
     private String name;
 
-    private Double initialWealth;
-    private Double calculatedInitialWealth;
+    private Double initialWealth = 0.0;
+    private Double calculatedInitialWealth = 0.0;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "cashBook")
@@ -45,6 +45,22 @@ public class CashBook {
      */
     public Double getCalculatedFinalWealth() {
         return 0.0;
+    }
+
+    /**
+     * Calculates the result of the current year.
+     * @return Double
+     */
+    public Double getResult() {
+        return getFinalWealth() - getInitialWealth();
+    }
+
+    /**
+     * Calculates the calculated result of the current year.
+     * @return Double
+     */
+    public Double getCalculatedResult() {
+        return getCalculatedFinalWealth() - getCalculatedInitialWealth();
     }
 
 }
