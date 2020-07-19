@@ -1,5 +1,6 @@
 package tobias.chess.cashBook.business.cashBook;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.ToString;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
@@ -25,7 +26,7 @@ public class CashBook {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "cashBook")
-    private List<CashBookEntry> cashBookEntries;
+    private List<CashBookEntry> cashBookEntries = Lists.newArrayList();
 
     /**
      * Calculates the final wealth of the current year.

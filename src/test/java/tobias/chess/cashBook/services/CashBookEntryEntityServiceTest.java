@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import tobias.chess.cashBook.business.cashBook.CashBookService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
@@ -26,6 +27,9 @@ class CashBookEntryEntityServiceTest {
 
     @Mock
     private CashBookEntryRepository cashBookEntryRepository;
+
+    @Mock
+    private CashBookService cashBookService;
 
     private CashBookEntry cashBookEntry;
     private SparkasseCsv csv;
@@ -51,9 +55,15 @@ class CashBookEntryEntityServiceTest {
     @Test
     public void transformCsvToCashBookEntry_importsAllCsvs() {
         List<SparkasseCsv> csvs = Lists.newArrayList();
-        csvs.add(new SparkasseCsv());
-        csvs.add(new SparkasseCsv());
-        csvs.add(new SparkasseCsv());
+        SparkasseCsv csv1 = new SparkasseCsv();
+        csv1.setPurpose("");
+        csvs.add(csv1);
+        SparkasseCsv csv2 = new SparkasseCsv();
+        csv2.setPurpose("");
+        csvs.add(csv2);
+        SparkasseCsv csv3 = new SparkasseCsv();
+        csv3.setPurpose("");
+        csvs.add(csv3);
 
         List<CashBookEntry> cashBookEntries = cashBookEntryService.transformCsvsToCashBookEntries(csvs);
 
