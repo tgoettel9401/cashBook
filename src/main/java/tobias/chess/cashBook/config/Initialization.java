@@ -55,6 +55,8 @@ public class Initialization implements InitializingBean {
         CashBook cashBook1 = new CashBook();
         cashBook1.setAccountNumber("DE48293837817");
         cashBook1.setName("CashBook-No.1");
+        cashBook1.setInitialWealth(738.99);
+        cashBook1.setCalculatedInitialWealth(287.10);
         cashBookRepository.save(cashBook1);
 
         CashBook cashBook2 = new CashBook();

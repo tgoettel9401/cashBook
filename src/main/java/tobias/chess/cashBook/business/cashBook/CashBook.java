@@ -20,8 +20,31 @@ public class CashBook {
 
     private String name;
 
+    private Double initialWealth;
+    private Double calculatedInitialWealth;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "cashBook")
     private List<CashBookEntry> cashBookEntries;
+
+    /**
+     * Calculates the final wealth of the current year.
+     * @return Double
+     */
+    public Double getFinalWealth() {
+        Double wealth = initialWealth;
+        for (CashBookEntry entry : cashBookEntries) {
+            wealth += entry.getValue();
+        }
+        return wealth;
+    }
+
+    /**
+     * Calculates the calculated final wealth of the current year.
+     * @return Double
+     */
+    public Double getCalculatedFinalWealth() {
+        return 0.0;
+    }
 
 }
