@@ -1,8 +1,9 @@
 package tobias.chess.cashBook.business.cashBookEntry;
 
-import lombok.Data;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import lombok.Data;
 
 @Data
 public class CashBookEntryDto {
@@ -11,8 +12,8 @@ public class CashBookEntryDto {
     private Integer position;
     private String incomeExpensePosition;
     private String title;
-    private Double income;
-    private Double expense;
+    private BigDecimal income;
+    private BigDecimal expense;
     private String receiverSender;
     private LocalDate valueDate;
 

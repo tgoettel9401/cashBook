@@ -1,5 +1,12 @@
 package tobias.chess.cashBook.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,17 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+
 import tobias.chess.cashBook.business.cashBook.CashBookService;
-import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
-import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryRepository;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.MockitoAnnotations.initMocks;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
 class CashBookEntryEntityServiceTest {
 
@@ -125,7 +127,7 @@ class CashBookEntryEntityServiceTest {
         cashBookEntry.setCashPartnerName(cashPartnerName);
         cashBookEntry.setCashPartnerAccountNumber(cashPartnerAccountNumber);
         cashBookEntry.setCashPartnerBankCode(cashPartnerBankCode);
-        cashBookEntry.setValue(value);
+        cashBookEntry.setValue(new BigDecimal(value));
 
     }
 

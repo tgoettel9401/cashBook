@@ -5,7 +5,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class MultipleCashBooksException extends Exception {
-    public MultipleCashBooksException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4354345582023569491L;
+
+	public MultipleCashBooksException() {
         super("The uploaded file consists of multiple account-numbers. Please insert a correct file that only contains a single CashBook!");
     }
 }

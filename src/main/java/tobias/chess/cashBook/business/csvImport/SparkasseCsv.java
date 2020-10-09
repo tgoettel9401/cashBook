@@ -43,6 +43,6 @@ public class SparkasseCsv {
 
     @JsonProperty("Betrag")
     @JsonDeserialize(using = GermanDoubleDeserializer.class)
-    private Double value;
+    private Double value = 0.0;
 
 }

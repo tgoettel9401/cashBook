@@ -5,7 +5,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus (HttpStatus.BAD_REQUEST)
 public class EmptyFileException extends Exception {
-    public EmptyFileException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public EmptyFileException() {
         super("Uploading an empty file is not allowed. Please replace by a correct file.");
     }
 }

@@ -9,7 +9,12 @@ import java.io.IOException;
 
 public class GermanDoubleDeserializer extends StdDeserializer<Double> {
 
-    public GermanDoubleDeserializer() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6665876458172019077L;
+
+	public GermanDoubleDeserializer() {
         this(null);
     }
 

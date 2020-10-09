@@ -1,6 +1,11 @@
 package tobias.chess.cashBook.config;
 
-import com.google.common.collect.Lists;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,15 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+
 import tobias.chess.cashBook.business.cashBook.CashBook;
 import tobias.chess.cashBook.business.cashBook.CashBookRepository;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryRepository;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class Initialization implements InitializingBean {
@@ -55,8 +58,8 @@ public class Initialization implements InitializingBean {
         CashBook cashBook1 = new CashBook();
         cashBook1.setAccountNumber("DE48293837817");
         cashBook1.setName("CashBook-No.1");
-        cashBook1.setInitialWealth(738.99);
-        cashBook1.setCalculatedInitialWealth(287.10);
+        cashBook1.setInitialWealth(new BigDecimal(738.99));
+        cashBook1.setCalculatedInitialWealth(new BigDecimal(287.10));
         cashBookRepository.save(cashBook1);
 
         CashBook cashBook2 = new CashBook();
@@ -77,7 +80,7 @@ public class Initialization implements InitializingBean {
         cashBookEntry1.setCashPartnerAccountNumber("DE83912938347");
         cashBookEntry1.setCashPartnerBankCode("GENODE761DZE");
         cashBookEntry1.setPurpose("Important stuff");
-        cashBookEntry1.setValue(17.20);
+        cashBookEntry1.setValue(new BigDecimal(17.20));
         cashBookEntry1.setCreatedAt(LocalDateTime.now());
         cashBookEntryRepository.save(cashBookEntry1);
 
@@ -90,7 +93,7 @@ public class Initialization implements InitializingBean {
         cashBookEntry2.setCashPartnerAccountNumber("DE83912938347");
         cashBookEntry2.setCashPartnerBankCode("GENODE761DZE");
         cashBookEntry2.setPurpose("This is much more important than the other one!");
-        cashBookEntry2.setValue(39.55);
+        cashBookEntry2.setValue(new BigDecimal(39.55));
         cashBookEntry2.setCreatedAt(LocalDateTime.now());
         cashBookEntryRepository.save(cashBookEntry2);
 

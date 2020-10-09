@@ -1,19 +1,22 @@
 package tobias.chess.cashBook.business.cashBookEntry;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tobias.chess.cashBook.business.cashBook.CashBook;
-import tobias.chess.cashBook.business.cashBook.CashBookService;
-import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
 @Service
 public class CashBookEntryService {
@@ -42,7 +45,7 @@ public class CashBookEntryService {
         sparkasseCsv.setCashPartnerName(cashBookEntry.getCashPartnerName());
         sparkasseCsv.setCashPartnerAccountNumber(cashBookEntry.getCashPartnerAccountNumber());
         sparkasseCsv.setCashPartnerBankCode(cashBookEntry.getCashPartnerBankCode());
-        sparkasseCsv.setValue(cashBookEntry.getValue());
+        sparkasseCsv.setValue(cashBookEntry.getValue().doubleValue());
         return sparkasseCsv;
     }
 
@@ -82,7 +85,7 @@ public class CashBookEntryService {
         cashBookEntry.setCashPartnerName(csvEntry.getCashPartnerName());
         cashBookEntry.setCashPartnerAccountNumber(csvEntry.getCashPartnerAccountNumber());
         cashBookEntry.setCashPartnerBankCode(csvEntry.getCashPartnerBankCode());
-        cashBookEntry.setValue(csvEntry.getValue());
+        cashBookEntry.setValue(new BigDecimal(csvEntry.getValue()));
         cashBookEntry.setCreatedAt(LocalDateTime.now());
         return cashBookEntry;
     }
@@ -110,15 +113,15 @@ public class CashBookEntryService {
             dto.setId(entry.getId());
             dto.setTitle(entry.getPurpose());
             dto.setValueDate(entry.getValueDate());
-            if (entry.getValue() >= 0) { // Counts as Income.
-                dto.setIncome(Math.abs(entry.getValue()));
-                dto.setExpense(0.00);
+            if (entry.getValue().doubleValue() >= 0) { // Counts as Income.
+                dto.setIncome(entry.getValue().abs());
+                dto.setExpense(new BigDecimal(0.00));
                 dto.setIncomeExpensePosition("E" + Strings.padStart(Integer.toString(incomeNumber), 3, '0'));
                 incomeNumber++;
             }
             else { // Counts as Expense.
-                dto.setIncome(0.00);
-                dto.setExpense(Math.abs(entry.getValue()));
+                dto.setIncome(new BigDecimal(0.00));
+                dto.setExpense(entry.getValue().abs());
                 dto.setIncomeExpensePosition("A" + Strings.padStart(Integer.toString(expenseNumber), 3, '0'));
                 expenseNumber++;
             }
