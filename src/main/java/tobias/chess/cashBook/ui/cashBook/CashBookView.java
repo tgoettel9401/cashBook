@@ -2,6 +2,7 @@ package tobias.chess.cashBook.ui.cashBook;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -17,8 +18,8 @@ public class CashBookView extends VerticalLayout {
 
     private CashBookDtoService cashBookDtoService;
 
-    Grid<CashBookDto> cashBookGrid = new Grid<>(CashBookDto.class);
-    private CashBookForm cashBookForm;
+    private Grid<CashBookDto> cashBookGrid = new Grid<>(CashBookDto.class);
+    private CashBookDialog cashBookDialog;
 
     public CashBookView(CashBookDtoService cashBookDtoService) {
         this.cashBookDtoService = cashBookDtoService;
@@ -29,11 +30,10 @@ public class CashBookView extends VerticalLayout {
     }
 
     public void editCashBook(CashBookDto cashBook) {
-        if (cashBook == null) {
-            closeEditor();
-        } else {
-            cashBookForm.setCashBook(cashBook);
-            cashBookForm.setVisible(true);
+        if (cashBook != null) {
+            cashBookDialog = new CashBookDialog();
+            cashBookDialog.addListener(CashBookDialog.SaveEvent.class, this::saveCashBook);
+            cashBookDialog.setCashBook(cashBook);
             addClassName("editing");
         }
     }
@@ -46,19 +46,12 @@ public class CashBookView extends VerticalLayout {
 
         configureGrid();
 
-        cashBookForm = new CashBookForm();
-        cashBookForm.addListener(CashBookForm.SaveEvent.class, this::saveCashBook);
-        cashBookForm.addListener(CashBookForm.DeleteEvent.class, this::deleteCashBook);
-        cashBookForm.addListener(CashBookForm.CloseEvent.class, e -> closeEditor());
-        cashBookForm.addListener(CashBookForm.LoadEntriesEvent.class, e -> loadEntries(e.getCashBook()));
-
-        Div content = new Div(cashBookGrid, cashBookForm);
+        Div content = new Div(cashBookGrid);
         content.addClassName("content");
         content.setSizeFull();
 
         add(header, addCashBookButton, content);
         updateList();
-        closeEditor();
     }
 
     private void addCashBook() {
@@ -74,32 +67,29 @@ public class CashBookView extends VerticalLayout {
         cashBookGrid.getColumns().forEach(column -> column.setAutoWidth(true));
         cashBookGrid.setHeightByRows(true);
 
-        cashBookGrid.asSingleSelect().addValueChangeListener(event -> editCashBook(event.getValue()));
+        cashBookGrid.addItemDoubleClickListener(event -> navigateToEntries(event.getItem()));
+
+        GridContextMenu<CashBookDto> contextMenu = cashBookGrid.addContextMenu();
+        contextMenu.addItem("Open", event -> event.getItem().ifPresent(this::navigateToEntries));
+        contextMenu.addItem("Edit", event -> event.getItem().ifPresent(this::editCashBook));
+        contextMenu.addItem("Delete", event -> event.getItem().ifPresent(this::deleteCashBook));
     }
 
     private void updateList() {
         cashBookGrid.setItems(cashBookDtoService.findAllDtos());
     }
 
-    private void saveCashBook(CashBookForm.SaveEvent event) {
+    private void saveCashBook(CashBookDialog.SaveEvent event) {
         cashBookDtoService.save(event.getCashBook());
         updateList();
-        closeEditor();
     }
 
-    private void deleteCashBook(CashBookForm.DeleteEvent event) {
-        cashBookDtoService.delete(event.getCashBook());
+    private void deleteCashBook(CashBookDto cashBook) {
+        cashBookDtoService.delete(cashBook);
         updateList();
-        closeEditor();
     }
 
-    private void closeEditor() {
-        cashBookForm.setCashBook(null);
-        cashBookForm.setVisible(false);
-        removeClassName("editing");
-    }
-
-    private void loadEntries(CashBookDto cashBook) {
+    private void navigateToEntries(CashBookDto cashBook) {
         this.getUI().ifPresent(ui -> ui.navigate("cashBookEntry/" + cashBook.getId()));
     }
 

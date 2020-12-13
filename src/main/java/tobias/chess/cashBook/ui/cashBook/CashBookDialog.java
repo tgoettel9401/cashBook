@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -15,7 +16,9 @@ import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 import com.vaadin.flow.shared.Registration;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 
-public class CashBookForm extends FormLayout {
+public class CashBookDialog extends FormLayout {
+
+    private Dialog dialog;
 
     private CashBookDto cashBook;
 
@@ -24,23 +27,24 @@ public class CashBookForm extends FormLayout {
     TextField accountNumber = new TextField("Account Number");
     TextField name = new TextField("Name");
     TextField initialWealth = new TextField("Initial Wealth");
-    TextField calculatedInitialWealth = new TextField("Calcualted Initial Wealth");
+    TextField calculatedInitialWealth = new TextField("Calculated Initial Wealth");
 
     Button saveButton = new Button("Save");
-    Button deleteButton = new Button("Delete");
     Button closeButton = new Button("Cancel");
-    Button getToEntriesButton = new Button("Get to entries");
 
-    public CashBookForm() {
+    public CashBookDialog() {
+
         addClassName("cash-book-form");
+
+        dialog = new Dialog();
+        dialog.setCloseOnEsc(true);
+
+        dialog.add(createTextFields());
+        dialog.add(createButtonsLayout());
+        dialog.open();
+
+
         initializeBinder();
-        add(accountNumber, name, initialWealth, calculatedInitialWealth, createButtonsLayout());
-
-        getToEntriesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        getToEntriesButton.setWidth("100%");
-        getToEntriesButton.addClickListener(event -> fireEvent(new LoadEntriesEvent(this, cashBook)));
-        add(getToEntriesButton);
-
     }
 
     public void setCashBook(CashBookDto cashBook) {
@@ -48,24 +52,31 @@ public class CashBookForm extends FormLayout {
         binder.readBean(cashBook);
     }
 
+    private Component createTextFields() {
+        HorizontalLayout layout = new HorizontalLayout(accountNumber, name, initialWealth, calculatedInitialWealth);
+        layout.addClassName("cash-book-form");
+        return layout;
+    }
+
     private Component createButtonsLayout() {
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         saveButton.addClickShortcut(Key.ENTER);
         closeButton.addClickShortcut(Key.ESCAPE);
 
-        saveButton.addClickListener(event -> validateAndSave());
-        deleteButton.addClickListener(event -> fireEvent(new DeleteEvent(this, cashBook)));
-        closeButton.addClickListener(event -> fireEvent(new CloseEvent(this)));
+        saveButton.addClickListener(event -> {
+            validateAndSave();
+            dialog.close();
+        });
+        closeButton.addClickListener(event -> dialog.close());
 
         binder.addStatusChangeListener(e -> saveButton.setEnabled(binder.isValid()));
 
-        return new HorizontalLayout(saveButton, deleteButton, closeButton);
+        return new HorizontalLayout(saveButton, closeButton);
     }
 
-    private void validateAndSave() {
+    public void validateAndSave() {
         try {
             binder.writeBean(cashBook);
             fireEvent(new SaveEvent(this, cashBook));
@@ -84,10 +95,10 @@ public class CashBookForm extends FormLayout {
     }
 
     // Events
-    public static abstract class CashBookFormEvent extends ComponentEvent<CashBookForm> {
+    public static abstract class CashBookFormEvent extends ComponentEvent<CashBookDialog> {
         private CashBookDto cashBook;
 
-        protected CashBookFormEvent(CashBookForm source, CashBookDto cashBook) {
+        protected CashBookFormEvent(CashBookDialog source, CashBookDto cashBook) {
             super(source, false);
             this.cashBook = cashBook;
         }
@@ -98,27 +109,8 @@ public class CashBookForm extends FormLayout {
     }
 
     public static class SaveEvent extends CashBookFormEvent {
-        SaveEvent(CashBookForm source, CashBookDto cashBook) {
+        SaveEvent(CashBookDialog source, CashBookDto cashBook) {
             super(source, cashBook);
-        }
-    }
-
-    public static class DeleteEvent extends CashBookFormEvent {
-        DeleteEvent(CashBookForm source, CashBookDto cashBook) {
-            super(source, cashBook);
-        }
-
-    }
-
-    public static class CloseEvent extends CashBookFormEvent {
-        CloseEvent(CashBookForm source) {
-            super(source, null);
-        }
-    }
-
-    public static class LoadEntriesEvent extends CashBookFormEvent {
-        LoadEntriesEvent(CashBookForm source, CashBookDto cashBook) {
-            super (source, cashBook);
         }
     }
 
