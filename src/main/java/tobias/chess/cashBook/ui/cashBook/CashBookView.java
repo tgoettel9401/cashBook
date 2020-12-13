@@ -50,7 +50,7 @@ public class CashBookView extends VerticalLayout {
         cashBookForm.addListener(CashBookForm.SaveEvent.class, this::saveCashBook);
         cashBookForm.addListener(CashBookForm.DeleteEvent.class, this::deleteCashBook);
         cashBookForm.addListener(CashBookForm.CloseEvent.class, e -> closeEditor());
-        cashBookForm.addListener(CashBookForm.LoadEntriesEvent.class, e -> loadEntries());
+        cashBookForm.addListener(CashBookForm.LoadEntriesEvent.class, e -> loadEntries(e.getCashBook()));
 
         Div content = new Div(cashBookGrid, cashBookForm);
         content.addClassName("content");
@@ -99,8 +99,8 @@ public class CashBookView extends VerticalLayout {
         removeClassName("editing");
     }
 
-    private void loadEntries() {
-
+    private void loadEntries(CashBookDto cashBook) {
+        this.getUI().ifPresent(ui -> ui.navigate("cashBookEntry/" + cashBook.getId()));
     }
 
 }

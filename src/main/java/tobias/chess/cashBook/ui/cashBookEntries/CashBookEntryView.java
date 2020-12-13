@@ -4,18 +4,16 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
-import tobias.chess.cashBook.business.cashBook.CashBookService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryDto;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 import tobias.chess.cashBook.ui.MainLayout;
 
 @Route(value = "cashBookEntry", layout = MainLayout.class)
 @PageTitle("Cash Book Entries")
-public class CashBookEntryView extends VerticalLayout {
+public class CashBookEntryView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private CashBookDtoService cashBookService;
     private CashBookEntryService cashBookEntryService;
@@ -31,8 +29,14 @@ public class CashBookEntryView extends VerticalLayout {
         loadView();
     }
 
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter Long cashBookId) {
+        cashBookService.findById(cashBookId).ifPresent(this::setCashBook);
+    }
+
     public void setCashBook(CashBookDto cashBook) {
         updateList(cashBook);
+        cashBookSelect.setValue(cashBook);
     }
 
     private void loadView() {

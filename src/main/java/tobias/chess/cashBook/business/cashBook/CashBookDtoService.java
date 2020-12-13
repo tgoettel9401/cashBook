@@ -21,6 +21,11 @@ public class CashBookDtoService {
         this.cashBookEntryService = cashBookEntryService;
     }
 
+    public Optional<CashBookDto> findById(Long id) {
+        Optional<CashBook> cashBookOptional = cashBookService.findById(id);
+        return cashBookOptional.map(this::createCashBookDtoFromCashBook);
+    }
+
     public List<CashBookDto> findAllDtos() {
         List<CashBookDto> cashBookDtos = Lists.newArrayList();
         cashBookService.findAll().forEach(

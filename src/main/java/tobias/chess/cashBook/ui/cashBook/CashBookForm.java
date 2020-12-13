@@ -35,6 +35,12 @@ public class CashBookForm extends FormLayout {
         addClassName("cash-book-form");
         initializeBinder();
         add(accountNumber, name, initialWealth, calculatedInitialWealth, createButtonsLayout());
+
+        getToEntriesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        getToEntriesButton.setWidth("100%");
+        getToEntriesButton.addClickListener(event -> fireEvent(new LoadEntriesEvent(this, cashBook)));
+        add(getToEntriesButton);
+
     }
 
     public void setCashBook(CashBookDto cashBook) {
@@ -53,7 +59,6 @@ public class CashBookForm extends FormLayout {
         saveButton.addClickListener(event -> validateAndSave());
         deleteButton.addClickListener(event -> fireEvent(new DeleteEvent(this, cashBook)));
         closeButton.addClickListener(event -> fireEvent(new CloseEvent(this)));
-        getToEntriesButton.addClickListener(event -> fireEvent(new LoadEntriesEvent(this, cashBook)));
 
         binder.addStatusChangeListener(e -> saveButton.setEnabled(binder.isValid()));
 
