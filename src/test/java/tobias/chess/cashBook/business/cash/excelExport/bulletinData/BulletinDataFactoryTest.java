@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
+import org.mockito.Mock;
 import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 import tobias.chess.cashBook.business.excelExport.bulletinData.BulletinData;
 import tobias.chess.cashBook.business.excelExport.bulletinData.BulletinDataFactory;
 import tobias.chess.cashBook.business.excelExport.bulletinData.BulletinHeaderLine;
@@ -16,7 +18,10 @@ import tobias.chess.cashBook.business.excelExport.bulletinData.BulletinHeaderLin
 public class BulletinDataFactoryTest {
 	
 	@InjectMocks
-	private BulletinDataFactory bulletinDataFactory; 
+	private BulletinDataFactory bulletinDataFactory;
+
+	@Mock
+	private CashBookEntryService cashBookEntryService;
 
 	@BeforeEach
 	void setUp() {
