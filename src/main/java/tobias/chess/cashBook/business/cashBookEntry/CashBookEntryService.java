@@ -15,6 +15,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
 import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
@@ -135,7 +136,16 @@ public class CashBookEntryService {
 
     }
 
-    private List<CashBookEntry> findAllByCashBook(CashBook cashBook) {
+    public List<CashBookEntryDto> findAllDtosByCashBookDto(CashBookDto cashBookDto) {
+        List<CashBookEntryDto> cashBookEntryDtos = Lists.newArrayList();
+        Optional<CashBook> cashBookOptional = cashBookService.findById(cashBookDto.getId());
+        cashBookOptional.ifPresent(
+                cashBook -> cashBookEntryDtos.addAll(createCashBookEntryDtosForCashBook(cashBook))
+        );
+        return cashBookEntryDtos;
+    }
+
+    public List<CashBookEntry> findAllByCashBook(CashBook cashBook) {
         return cashBookEntryRepository.findAllByCashBook(cashBook);
     }
 

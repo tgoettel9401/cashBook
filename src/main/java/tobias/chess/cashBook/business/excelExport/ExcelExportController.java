@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import tobias.chess.cashBook.business.cashBook.CashBookNotFoundException;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
 
 @RestController
+@BasePathAwareController
 public class ExcelExportController {
 	
 	private final ExcelExportService excelExportService;
