@@ -1,23 +1,21 @@
 package tobias.chess.cashBook.business.cashBookEntry;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.business.cashBook.CashBookDto;
+import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
-import tobias.chess.cashBook.business.cashBook.CashBook;
-import tobias.chess.cashBook.business.cashBook.CashBookDto;
-import tobias.chess.cashBook.business.cashBook.CashBookService;
-import tobias.chess.cashBook.business.csvImport.SparkasseCsv;
 
 @Service
 public class CashBookEntryService {
@@ -86,7 +84,7 @@ public class CashBookEntryService {
         cashBookEntry.setCashPartnerName(csvEntry.getCashPartnerName());
         cashBookEntry.setCashPartnerAccountNumber(csvEntry.getCashPartnerAccountNumber());
         cashBookEntry.setCashPartnerBankCode(csvEntry.getCashPartnerBankCode());
-        cashBookEntry.setValue(new BigDecimal(csvEntry.getValue()));
+        cashBookEntry.setValue(BigDecimal.valueOf(csvEntry.getValue()));
         cashBookEntry.setCreatedAt(LocalDateTime.now());
         return cashBookEntry;
     }
@@ -110,30 +108,56 @@ public class CashBookEntryService {
         int incomeNumber = 1;
         int expenseNumber = 1;
         for (CashBookEntry entry : cashBookEntries) {
-            CashBookEntryDto dto = new CashBookEntryDto();
-            dto.setId(entry.getId());
-            dto.setTitle(entry.getPurpose());
-            dto.setValueDate(entry.getValueDate());
-            if (entry.getValue().doubleValue() >= 0) { // Counts as Income.
-                dto.setIncome(entry.getValue().abs());
-                dto.setExpense(new BigDecimal(0.00));
-                dto.setIncomeExpensePosition("E" + Strings.padStart(Integer.toString(incomeNumber), 3, '0'));
-                incomeNumber++;
-            }
-            else { // Counts as Expense.
-                dto.setIncome(new BigDecimal(0.00));
-                dto.setExpense(entry.getValue().abs());
-                dto.setIncomeExpensePosition("A" + Strings.padStart(Integer.toString(expenseNumber), 3, '0'));
-                expenseNumber++;
-            }
-            dto.setPosition(positionNumber);
-            dto.setReceiverSender(entry.getCashPartnerName());
-            positionNumber++;
+            CashBookEntryDto dto = createDtoForCashBookEntry(entry, positionNumber, expenseNumber, incomeNumber);
             dtos.add(dto);
+            if (entry.getValue().doubleValue() >= 0)
+                incomeNumber++;
+            else
+                expenseNumber++;
+            positionNumber++;
         }
 
         return dtos;
 
+    }
+
+    public CashBookEntryDto createDtoForCashBookEntry(CashBookEntry entry, Integer positionNumber,
+                                                      Integer expenseNumber, Integer incomeNumber) {
+        CashBookEntryDto dto = new CashBookEntryDto();
+        dto.setId(entry.getId());
+        dto.setTitle(entry.getPurpose());
+        dto.setValueDate(entry.getValueDate());
+        if (entry.getValue().doubleValue() >= 0) { // Counts as Income.
+            dto.setIncome(entry.getValue().abs());
+            dto.setExpense(new BigDecimal("0.00"));
+            dto.setIncomeExpensePosition("E" + Strings.padStart(Integer.toString(incomeNumber), 3, '0'));
+        } else { // Counts as Expense.
+            dto.setIncome(new BigDecimal("0.00"));
+            dto.setExpense(entry.getValue().abs());
+            dto.setIncomeExpensePosition("A" + Strings.padStart(Integer.toString(expenseNumber), 3, '0'));
+        }
+        dto.setPosition(positionNumber);
+        dto.setReceiverSender(entry.getCashPartnerName());
+        return dto;
+    }
+
+    public CashBookEntry createOrFindCashBookEntryForDto(CashBookEntryDto cashBookEntryDto) {
+        Optional<CashBookEntry> cashBookEntryOptional = cashBookEntryRepository.findById(cashBookEntryDto.getId());
+        CashBookEntry cashBookEntry;
+        if (cashBookEntryOptional.isPresent())
+            cashBookEntry = cashBookEntryOptional.get();
+        else {
+            cashBookEntry = new CashBookEntry();
+            cashBookEntry.setCreatedAt(LocalDateTime.now());
+        }
+        cashBookEntry.setCashPartnerName(cashBookEntryDto.getReceiverSender());
+        cashBookEntry.setPurpose(cashBookEntryDto.getTitle());
+        if (cashBookEntryDto.getIncome().doubleValue() > 0)
+            cashBookEntry.setValue(cashBookEntryDto.getIncome());
+        else
+            cashBookEntry.setValue(cashBookEntryDto.getExpense().multiply(BigDecimal.valueOf(-1.00)));
+        cashBookEntry.setValueDate(cashBookEntryDto.getValueDate());
+        return cashBookEntry;
     }
 
     public List<CashBookEntryDto> findAllDtosByCashBookDto(CashBookDto cashBookDto) {
@@ -168,5 +192,13 @@ public class CashBookEntryService {
 
     public List<CashBookEntry> saveAll(List<CashBookEntry> cashBookEntries) {
         return cashBookEntryRepository.saveAll(cashBookEntries);
+    }
+
+    public CashBookEntry save(CashBookEntry cashBookEntry) {
+        return cashBookEntryRepository.save(cashBookEntry);
+    }
+
+    public void save(CashBookEntryDto cashBookEntryDto) {
+        save(createOrFindCashBookEntryForDto(cashBookEntryDto));
     }
 }
