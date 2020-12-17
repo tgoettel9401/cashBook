@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import tobias.chess.cashBook.ui.budgetPosition.BudgetPositionView;
 import tobias.chess.cashBook.ui.cashBook.CashBookView;
 import tobias.chess.cashBook.ui.cashBookEntry.CashBookEntryView;
 
@@ -38,8 +39,10 @@ public class MainLayout extends AppLayout {
         cashBookLink.setHighlightCondition(HighlightConditions.sameLocation());
         RouterLink cashBookEntryLink = new RouterLink("Cash-Book-Entries", CashBookEntryView.class);
         cashBookEntryLink.setHighlightCondition(HighlightConditions.sameLocation());
+        RouterLink budgetPositionLink = new RouterLink("Budget-Positions", BudgetPositionView.class);
+        budgetPositionLink.setHighlightCondition(HighlightConditions.sameLocation());
 
-        addToDrawer(new VerticalLayout(cashBookLink, cashBookEntryLink));
+        addToDrawer(new VerticalLayout(cashBookLink, cashBookEntryLink, budgetPositionLink));
     }
 
 }
