@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.ui.cashBookEntries;
+package tobias.chess.cashBook.ui.cashBookEntry;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -21,9 +21,9 @@ import java.util.WeakHashMap;
 
 public class BulletinTable extends VerticalLayout {
 
-    private CashBookDto cashBook;
-
     private CashBookEntryService cashBookEntryService;
+
+    private CashBookDto cashBook;
 
     private Grid<CashBookEntryDto> cashBookEntryGrid = new Grid<>(CashBookEntryDto.class);
 

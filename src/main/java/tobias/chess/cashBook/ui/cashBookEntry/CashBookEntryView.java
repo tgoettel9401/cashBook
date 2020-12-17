@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.ui.cashBookEntries;
+package tobias.chess.cashBook.ui.cashBookEntry;
 
 import com.google.common.collect.Maps;
 import com.vaadin.flow.component.Component;

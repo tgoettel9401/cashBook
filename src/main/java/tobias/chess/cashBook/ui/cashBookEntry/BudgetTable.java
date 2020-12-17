@@ -1,4 +1,4 @@
-package tobias.chess.cashBook.ui.cashBookEntries;
+package tobias.chess.cashBook.ui.cashBookEntry;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;

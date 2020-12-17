@@ -10,7 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import tobias.chess.cashBook.ui.cashBook.CashBookView;
-import tobias.chess.cashBook.ui.cashBookEntries.CashBookEntryView;
+import tobias.chess.cashBook.ui.cashBookEntry.CashBookEntryView;
 
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
