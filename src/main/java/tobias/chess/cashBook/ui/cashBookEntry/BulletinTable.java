@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryDto;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
@@ -22,13 +24,15 @@ import java.util.WeakHashMap;
 public class BulletinTable extends VerticalLayout {
 
     private CashBookEntryService cashBookEntryService;
+    private BudgetPositionService budgetPositionService;
 
     private CashBookDto cashBook;
 
     private Grid<CashBookEntryDto> cashBookEntryGrid = new Grid<>(CashBookEntryDto.class);
 
-    public BulletinTable(CashBookEntryService cashBookEntryService) {
+    public BulletinTable(CashBookEntryService cashBookEntryService, BudgetPositionService budgetPositionService) {
         this.cashBookEntryService = cashBookEntryService;
+        this.budgetPositionService = budgetPositionService;
         configureGrid();
         add(cashBookEntryGrid);
     }
@@ -54,6 +58,8 @@ public class BulletinTable extends VerticalLayout {
         editor.setBuffered(true);
         configureColumns(binder, editor);
         cashBookEntryGrid.getColumnByKey("id").setVisible(false);
+        GridContextMenu<CashBookEntryDto> contextMenu = cashBookEntryGrid.addContextMenu();
+        contextMenu.addItem("Edit Budget-Position", event -> event.getItem().ifPresent(this::editBudgetPosition));
     }
 
     private void configureColumns(Binder<CashBookEntryDto> binder, Editor<CashBookEntryDto> editor) {
@@ -93,6 +99,11 @@ public class BulletinTable extends VerticalLayout {
         DatePicker valueDateField = new DatePicker();
         binder.forField(valueDateField).bind("valueDate");
         cashBookEntryGrid.getColumnByKey("valueDate").setEditorComponent(valueDateField);
+
+        // Budget Position Column
+        cashBookEntryGrid.addColumn(cashBookEntry -> cashBookEntry.getBudgetPosition().getName())
+                .setHeader("Budget Position")
+                .setKey("budgetPosition");
 
         // Buttons Column
         Collection<Button> editButtons = Collections
@@ -143,6 +154,11 @@ public class BulletinTable extends VerticalLayout {
 
     private void updateList(CashBookDto cashBook) {
         cashBookEntryGrid.setItems(cashBookEntryService.findAllDtosByCashBookDto(cashBook));
+    }
+
+    private void editBudgetPosition(CashBookEntryDto cashBookEntry) {
+        BudgetPositionEditDialog dialog = new BudgetPositionEditDialog(budgetPositionService, cashBookEntryService,
+                cashBookEntry, cashBook);
     }
 
 }

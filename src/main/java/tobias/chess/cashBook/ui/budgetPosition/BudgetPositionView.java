@@ -43,7 +43,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
     }
 
     private void loadView() {
-        H1 header = new H1("Cash Book Entry Overview");
+        H1 header = new H1("Budget Position Overview");
         configureFilter();
         configureGrid();
         add(header, cashBookSelect, grid);
@@ -69,77 +69,10 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
         Editor<BudgetPosition> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
-        configureColumns(binder, editor);
     }
 
     private void updateList(CashBookDto cashBook) {
         grid.setItems(budgetPositionService.findAllByCashBookDto(cashBook));
-    }
-
-    private void configureColumns(Binder<BudgetPosition> binder, Editor<BudgetPosition> editor) {
-/*
-        // Position String Column
-        TextField positionField = new TextField();
-        binder.forField(positionField).withConverter(new StringToIntegerConverter("")).bind( "positionString");
-        grid.getColumnByKey("positionString").setEditorComponent(positionField);
-
-        // Header Column
-        TextField incomeExpensePositionField = new TextField();
-        binder.forField(incomeExpensePositionField).bind("incomeExpensePosition");
-        grid.getColumnByKey("incomeExpensePosition")
-                .setEditorComponent(incomeExpensePositionField);
-
-        // Title Column
-        TextField titleField = new TextField();
-        binder.forField(titleField).bind("title");
-        grid.getColumnByKey("title").setEditorComponent(titleField);
-
-        // Entry Column
-        TextField incomeField = new TextField();
-        binder.forField(incomeField).withConverter(new StringToBigDecimalConverter("")).bind("income");
-        grid.getColumnByKey("income").setEditorComponent(incomeField);
-
-        // Buttons Column
-        Collection<Button> editButtons = Collections
-                .newSetFromMap(new WeakHashMap<>());
-        Grid.Column<CashBookEntryDto> editorColumn = cashBookEntryGrid.addComponentColumn(cashBookEntry -> {
-            Button edit = new Button("Edit");
-            edit.addClassName("edit");
-            edit.addClickListener(e -> {
-                editor.editItem(cashBookEntry);
-                titleField.focus();
-            });
-            edit.setEnabled(!editor.isOpen());
-            editButtons.add(edit);
-            return edit;
-        });
-
-        editor.addOpenListener(e -> editButtons
-                .forEach(button -> button.setEnabled(!editor.isOpen())));
-        editor.addCloseListener(e -> editButtons
-                .forEach(button -> button.setEnabled(!editor.isOpen())));
-
-        Button save = new Button("Save", e -> editor.save());
-        save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-
-        Button cancel = new Button("Cancel", e -> editor.cancel());
-        cancel.addThemeVariants(ButtonVariant.LUMO_ERROR);
-
-        cashBookEntryGrid.getElement().addEventListener("keyup", event -> editor.cancel())
-                .setFilter("event.key === 'Escape' || event.key === 'Esc'");
-
-        Div buttons = new Div(save, cancel);
-        editorColumn.setEditorComponent(buttons);
-
-        editor.addSaveListener(
-                event -> {
-                    saveCashBookEntry(event.getItem());
-                    editor.cancel();
-                    updateList(cashBook);
-                });*/
-
-        grid.getColumns().forEach(column -> column.setAutoWidth(true));
-
     }
 
 }

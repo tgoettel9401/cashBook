@@ -13,6 +13,7 @@ import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitleRe
 import tobias.chess.cashBook.business.cashBook.CashBook;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryBudgetPosition;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,28 @@ public class BudgetPositionService {
         }
 
         return positions;
+    }
+
+    public CashBookEntryBudgetPosition createCashBookEntryBudgetPosition(BudgetPosition budgetPosition) {
+        CashBookEntryBudgetPosition cashBookEntryBudgetPosition = new CashBookEntryBudgetPosition();
+        cashBookEntryBudgetPosition.setBudgetPositionHeader(budgetPosition.getHeader());
+        cashBookEntryBudgetPosition.setBudgetPositionTitle(budgetPosition.getTitle());
+        cashBookEntryBudgetPosition.setBudgetPositionPoint(budgetPosition.getPoint());
+        cashBookEntryBudgetPosition.setBudgetPositionEntry(budgetPosition.getEntry());
+        return cashBookEntryBudgetPosition;
+    }
+
+    public BudgetPosition createBudgetPosition(CashBookEntryBudgetPosition cashBookEntryBudgetPosition) {
+        BudgetPosition budgetPosition = new BudgetPosition();
+        budgetPosition.setHeader(cashBookEntryBudgetPosition.getBudgetPositionHeader());
+        budgetPosition.setTitle(cashBookEntryBudgetPosition.getBudgetPositionTitle());
+        budgetPosition.setPoint(cashBookEntryBudgetPosition.getBudgetPositionPoint());
+        budgetPosition.setEntry(cashBookEntryBudgetPosition.getBudgetPositionEntry());
+        budgetPosition.setPositionString(createPositionString(
+                cashBookEntryBudgetPosition.getBudgetPositionHeader(), cashBookEntryBudgetPosition.getBudgetPositionTitle(),
+                cashBookEntryBudgetPosition.getBudgetPositionPoint(), cashBookEntryBudgetPosition.getBudgetPositionEntry()
+        ));
+        return budgetPosition;
     }
 
     private String createPositionString(BudgetPositionHeader header, BudgetPositionTitle title,

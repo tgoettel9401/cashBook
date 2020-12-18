@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBook;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
@@ -22,11 +23,14 @@ public class CashBookEntryService {
 
     private final CashBookEntryRepository cashBookEntryRepository;
     private final CashBookService cashBookService;
+    private final BudgetPositionService budgetPositionService;
 
     @Autowired
-    public CashBookEntryService(CashBookEntryRepository cashBookEntryRepository, CashBookService cashBookService) {
+    public CashBookEntryService(CashBookEntryRepository cashBookEntryRepository, CashBookService cashBookService,
+                                BudgetPositionService budgetPositionService) {
         this.cashBookEntryRepository = cashBookEntryRepository;
         this.cashBookService = cashBookService;
+        this.budgetPositionService = budgetPositionService;
     }
 
     /**
@@ -138,6 +142,10 @@ public class CashBookEntryService {
         }
         dto.setPosition(positionNumber);
         dto.setReceiverSender(entry.getCashPartnerName());
+
+        dto.setEntry(entry);
+        dto.setBudgetPosition(budgetPositionService.createBudgetPosition(entry.getBudgetPosition()));
+
         return dto;
     }
 
@@ -157,6 +165,8 @@ public class CashBookEntryService {
         else
             cashBookEntry.setValue(cashBookEntryDto.getExpense().multiply(BigDecimal.valueOf(-1.00)));
         cashBookEntry.setValueDate(cashBookEntryDto.getValueDate());
+        cashBookEntry.setBudgetPosition(budgetPositionService.createCashBookEntryBudgetPosition(
+                cashBookEntryDto.getBudgetPosition()));
         return cashBookEntry;
     }
 
@@ -201,4 +211,5 @@ public class CashBookEntryService {
     public void save(CashBookEntryDto cashBookEntryDto) {
         save(createOrFindCashBookEntryForDto(cashBookEntryDto));
     }
+
 }

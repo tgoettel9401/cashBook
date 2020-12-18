@@ -23,5 +23,4 @@ public class BudgetPositionEntry {
     @ManyToOne
     private BudgetPositionPoint point;
 
-
 }

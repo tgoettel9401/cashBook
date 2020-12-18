@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.budgetPosition.entry.BudgetPositionEntry;
 import tobias.chess.cashBook.business.budgetPosition.entry.BudgetPositionEntryRepository;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
@@ -44,6 +45,8 @@ public class Initialization implements InitializingBean {
     @Autowired private BudgetPositionPointRepository budgetPositionPointRepository;
     @Autowired private BudgetPositionEntryRepository budgetPositionEntryRepository;
 
+    @Autowired private BudgetPositionService budgetPositionService;
+
     @Override
     @Transactional
     public void afterPropertiesSet() {
@@ -53,6 +56,7 @@ public class Initialization implements InitializingBean {
             List<CashBook> cashBookEntities = getInitialCashBooks();
             List<CashBookEntry> cashBookEntries = getInitialCashBookEntries(cashBookEntities.get(0));
             List<BudgetPosition> budgetPositions = getInitialBudgetPositions(cashBookEntities.get(0));
+            addBudgetPositionsToCashBookEntries(cashBookEntries, budgetPositions);
             logger.info(
                     "Database-Initialization has been performed. Inserted "
                             + cashBookEntities.size()
@@ -160,6 +164,13 @@ public class Initialization implements InitializingBean {
 
         return Lists.newArrayList(budgetPositionOne, budgetPositionTwo);
 
+    }
+
+    private void addBudgetPositionsToCashBookEntries(List<CashBookEntry> cashBookEntries, List<BudgetPosition> budgetPositions) {
+        for (CashBookEntry entry : cashBookEntries) {
+            entry.setBudgetPosition(budgetPositionService.createCashBookEntryBudgetPosition(budgetPositions.get(0)));
+            cashBookEntryRepository.save(entry);
+        }
     }
 
 }

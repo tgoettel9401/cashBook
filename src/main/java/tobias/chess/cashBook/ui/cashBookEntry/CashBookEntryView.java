@@ -8,6 +8,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.*;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
@@ -21,15 +22,18 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
 
     private CashBookDtoService cashBookService;
     private CashBookEntryService cashBookEntryService;
+    private BudgetPositionService budgetPositionService;
 
     private Select<CashBookDto> cashBookSelect = new Select<>();
 
     private BulletinTable bulletinTable;
     private BudgetTable budgetTable;
 
-    public CashBookEntryView(CashBookEntryService cashBookEntryService, CashBookDtoService cashBookService) {
+    public CashBookEntryView(CashBookEntryService cashBookEntryService, CashBookDtoService cashBookService,
+                             BudgetPositionService budgetPositionService) {
         this.cashBookEntryService = cashBookEntryService;
         this.cashBookService = cashBookService;
+        this.budgetPositionService = budgetPositionService;
         addClassName("cash-book-entry-view");
 
         loadView();
@@ -50,7 +54,7 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
 
         configureFilter();
 
-        this.bulletinTable = new BulletinTable(cashBookEntryService);
+        this.bulletinTable = new BulletinTable(cashBookEntryService, budgetPositionService);
         this.budgetTable = new BudgetTable(cashBookEntryService);
 
         Tab tabBulletin = new Tab("Bulletin");
