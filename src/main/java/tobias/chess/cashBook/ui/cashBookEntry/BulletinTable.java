@@ -53,6 +53,7 @@ public class BulletinTable extends VerticalLayout {
         editor.setBinder(binder);
         editor.setBuffered(true);
         configureColumns(binder, editor);
+        cashBookEntryGrid.getColumnByKey("id").setVisible(false);
     }
 
     private void configureColumns(Binder<CashBookEntryDto> binder, Editor<CashBookEntryDto> editor) {

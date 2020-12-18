@@ -56,6 +56,7 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
         Tab tabBulletin = new Tab("Bulletin");
         Tab tabBudget = new Tab("Budget");
         Tabs tabs = new Tabs(tabBulletin, tabBudget);
+
         Map<Tab, Component> tabsToPages = Maps.newHashMap();
         tabsToPages.put(tabBulletin, bulletinTable);
         tabsToPages.put(tabBudget, budgetTable);
@@ -65,8 +66,6 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
             Component selectedPage = tabsToPages.get(tabs.getSelectedTab());
             selectedPage.setVisible(true);
         });
-
-        bulletinTable.setVisible(false);
 
         add(header, cashBookSelect, tabs, bulletinTable, budgetTable);
 
