@@ -6,9 +6,15 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+
 import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
-import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDto;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDtoService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
 import tobias.chess.cashBook.ui.MainLayout;
@@ -18,13 +24,13 @@ import tobias.chess.cashBook.ui.MainLayout;
 public class BudgetPositionView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private CashBookDtoService cashBookService;
-    private final BudgetPositionService budgetPositionService;
+    private final BudgetPositionDtoService budgetPositionService;
 
     private Select<CashBookDto> cashBookSelect = new Select<>();
 
-    private Grid<BudgetPosition> grid = new Grid<>(BudgetPosition.class);
+    private Grid<BudgetPositionDto> grid = new Grid<>(BudgetPositionDto.class);
 
-    public BudgetPositionView(CashBookDtoService cashBookService, BudgetPositionService budgetPositionService) {
+    public BudgetPositionView(CashBookDtoService cashBookService, BudgetPositionDtoService budgetPositionService) {
         this.cashBookService = cashBookService;
         this.budgetPositionService = budgetPositionService;
         addClassName("budget-position-view");
@@ -65,14 +71,14 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
         grid.setSizeFull();
         grid.setColumns("positionString", "header", "title", "point", "entry");
         grid.setHeightByRows(true);
-        Binder<BudgetPosition> binder = new Binder<>(BudgetPosition.class);
-        Editor<BudgetPosition> editor = grid.getEditor();
+        Binder<BudgetPositionDto> binder = new Binder<>(BudgetPositionDto.class);
+        Editor<BudgetPositionDto> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
     }
 
     private void updateList(CashBookDto cashBook) {
-        grid.setItems(budgetPositionService.findAllByCashBookDto(cashBook));
+        grid.setItems(budgetPositionService.findAllDtosForCashBookDto(cashBook));
     }
 
 }
