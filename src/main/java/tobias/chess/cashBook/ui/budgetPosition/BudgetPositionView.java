@@ -1,25 +1,27 @@
 package tobias.chess.cashBook.ui.budgetPosition;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.router.*;
 import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
 import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
 import tobias.chess.cashBook.ui.MainLayout;
+
+import java.util.List;
 
 @Route(value = "budgetPosition", layout = MainLayout.class)
 @PageTitle("Budget-Positions")
@@ -30,7 +32,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
 
     private Select<CashBookDto> cashBookSelect = new Select<>();
 
-    private Grid<BudgetPosition> grid = new Grid<>(BudgetPosition.class);
+    private Grid<BudgetPosition> grid = new Grid<>();
 
     public BudgetPositionView(CashBookDtoService cashBookService, BudgetPositionService budgetPositionService) {
         this.cashBookService = cashBookService;
@@ -79,7 +81,6 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
 	private void configureGrid() {
         grid.addClassName("cash-book-entry-grid");
         grid.setSizeFull();
-        grid.removeAllColumns(); // TODO: Refactor so that removing is not necessary
         grid.addColumn(BudgetPosition::getPosition).setHeader("Position");
         grid.addColumn(BudgetPosition::getHeaderString).setHeader("Header");
         grid.addColumn(BudgetPosition::getTitleString).setHeader("Title");
@@ -99,14 +100,42 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
     	BudgetPosition budgetPosition = event.getBudgetPosition();
     	updateList(budgetPosition.getCashBookDto());
     }
+
+    private void handleSaveBudgetPositionFailed(BudgetPositionDialog.SaveFailedEvent event) {
+        List<ValidationResult> errors = event.getErrors();
+
+        Notification notification = new Notification();
+        notification.setPosition(Notification.Position.MIDDLE);
+        errors.forEach(error -> notification.add(new Paragraph(error.getErrorMessage())));
+        Button closeButton = new Button("Close");
+        closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        closeButton.addClickListener(innerEvent -> {
+            notification.close();
+            openAddBudgetPositionDialog();
+        });
+        closeButton.addClickShortcut(Key.ESCAPE);
+        closeButton.addClickShortcut(Key.ENTER);
+        notification.add(closeButton);
+        notification.open();
+
+    }
     
     private void openAddBudgetPositionDialog() {
-		BudgetPositionDialog dialog = new BudgetPositionDialog(budgetPositionService);
-		dialog.setCashBook(cashBookSelect.getValue());
-		dialog.setHeaderItems(budgetPositionService.findAllHeaders());
-		dialog.setTitleItems(budgetPositionService.findAllTitles());
-		dialog.setPointItems(budgetPositionService.findAllPoints());
-		dialog.addListener(BudgetPositionDialog.SaveEvent.class, this::handleSaveBudgetPosition);
+
+        if (cashBookSelect.isEmpty())
+            Notification.show("No Cash-Book has been selected, please do that first!", 2000,
+                    Notification.Position.MIDDLE);
+
+        else {
+            BudgetPositionDialog dialog = new BudgetPositionDialog(budgetPositionService);
+            dialog.setCashBook(cashBookSelect.getValue());
+            dialog.setHeaderItems(budgetPositionService.findAllHeaders());
+            dialog.setTitleItems(budgetPositionService.findAllTitles());
+            dialog.setPointItems(budgetPositionService.findAllPoints());
+            dialog.addListener(BudgetPositionDialog.SaveEvent.class, this::handleSaveBudgetPosition);
+            dialog.addListener(BudgetPositionDialog.SaveFailedEvent.class, this::handleSaveBudgetPositionFailed);
+        }
+
 	}
 
 }

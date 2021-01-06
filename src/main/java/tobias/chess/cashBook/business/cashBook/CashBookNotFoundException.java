@@ -13,4 +13,9 @@ public class CashBookNotFoundException extends Exception {
 	public CashBookNotFoundException() {
         super("So far no CashBook exists for this request!");
     }
+
+    public CashBookNotFoundException(Long cashBookId) {
+		super("No CashBook exists for ID " + cashBookId);
+	}
+
 }

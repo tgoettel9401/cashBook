@@ -1,7 +1,5 @@
 package tobias.chess.cashBook.ui.budgetPosition;
 
-import java.util.List;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -24,13 +22,14 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.shared.Registration;
-
 import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
 import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
+
+import java.util.List;
 
 public class BudgetPositionDialog extends FormLayout {
 	
@@ -229,16 +228,7 @@ public class BudgetPositionDialog extends FormLayout {
         try {
             binder.writeBean(value);
         } catch (ValidationException e) {
-        	Notification notification = new Notification();
-            notification.setPosition(Position.MIDDLE);
-            e.getValidationErrors().forEach(error -> notification.add(new Paragraph(error.getErrorMessage())));
-            Button closeButton = new Button("Close");
-            closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            closeButton.addClickListener(event -> notification.close());
-            closeButton.addClickShortcut(Key.ESCAPE);
-            closeButton.addClickShortcut(Key.ENTER);
-            notification.add(closeButton);
-            notification.open();         
+            fireEvent(new SaveFailedEvent(this, e.getValidationErrors()));
         }
 
         CashBookDto cashBook = cashBookSelect.getValue();
@@ -246,49 +236,57 @@ public class BudgetPositionDialog extends FormLayout {
         BudgetPositionTitle title;
         BudgetPositionPoint point; 
         boolean saveIsPerformed = false; 
-        
-        // Save Header if applicable. It starts with Header because this may be needed for title and point.
-        if (value.isAddHeader()) {
-        	String name = headerTextField.getValue();
-        	Integer position = headerNumberField.getValue();
-        	header = budgetPositionService.saveHeader(cashBook, name, position);
-        	saveIsPerformed = true;
+
+        try {
+
+            // Save Header if applicable. It starts with Header because this may be needed for title and point.
+            if (value.isAddHeader()) {
+                String name = headerTextField.getValue();
+                Integer position = headerNumberField.getValue();
+                header = budgetPositionService.saveHeader(cashBook, name, position);
+                saveIsPerformed = true;
+            }
+            else {
+                header = headerSelect.getValue();
+            }
+
+            // Save Title if applicable.
+            if (value.isAddTitle()) {
+                String name = titleTextField.getValue();
+                Integer position = titleNumberField.getValue();
+                title = budgetPositionService.saveTitle(header, name, position);
+                saveIsPerformed = true;
+            }
+            else {
+                title = titleSelect.getValue();
+            }
+
+            // Save Point if applicable.
+            if (value.isAddPoint()) {
+                String name = pointTextField.getValue();
+                Integer position = pointNumberField.getValue();
+                point = budgetPositionService.savePoint(title, name, position);
+                saveIsPerformed = true;
+            }
+            else {
+                point = pointSelect.getValue();
+            }
+
+            if (saveIsPerformed) {
+                BudgetPosition budgetPosition = new BudgetPosition();
+                budgetPosition.setCashBookDto(cashBook);
+                budgetPosition.setHeader(header);
+                budgetPosition.setTitle(title);
+                budgetPosition.setPoint(point);
+                fireEvent(new SaveEvent(this, budgetPosition));
+            }
+
+        } catch (Exception ex) {
+            Notification exceptionNotification = new Notification();
+            exceptionNotification.setPosition(Position.MIDDLE);
+            exceptionNotification.add(new Paragraph(ex.getMessage()));
+            exceptionNotification.open();
         }
-        else {
-        	header = headerSelect.getValue();
-        }
-        
-        // Save Title if applicable.
-        if (value.isAddTitle()) {
-        	String name = titleTextField.getValue();
-        	Integer position = titleNumberField.getValue();
-        	title = budgetPositionService.saveTitle(header, name, position);
-        	saveIsPerformed = true;
-        }
-        else {
-        	title = titleSelect.getValue();
-        }
-        
-        // Save Point if applicable.
-        if (value.isAddPoint()) {
-        	String name = pointTextField.getValue();
-        	Integer position = pointNumberField.getValue();
-        	point = budgetPositionService.savePoint(title, name, position);
-        	saveIsPerformed = true;
-        }
-        else {
-        	point = pointSelect.getValue();
-        }
-        
-        if (saveIsPerformed) {
-        	BudgetPosition budgetPosition = new BudgetPosition();
-        	budgetPosition.setCashBookDto(cashBook);
-        	budgetPosition.setHeader(header);
-        	budgetPosition.setTitle(title);
-        	budgetPosition.setPoint(point);
-        	fireEvent(new SaveEvent(this, budgetPosition));
-        }
-        	
         
     }
 
@@ -321,6 +319,17 @@ public class BudgetPositionDialog extends FormLayout {
         }
         public BudgetPosition getBudgetPosition() {
         	return budgetPosition;
+        }
+    }
+
+    public static class SaveFailedEvent extends ComponentEvent<BudgetPositionDialog> {
+        private List<ValidationResult> errors;
+        protected SaveFailedEvent(BudgetPositionDialog source, List<ValidationResult> errors) {
+            super(source, false);
+            this.errors = errors;
+        }
+        public List<ValidationResult> getErrors() {
+            return errors;
         }
     }
 

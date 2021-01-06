@@ -17,6 +17,7 @@ import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitleRepository;
 import tobias.chess.cashBook.business.cashBook.CashBook;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
+import tobias.chess.cashBook.business.cashBook.CashBookNotFoundException;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryBudgetPosition;
 
@@ -120,11 +121,13 @@ public class BudgetPositionService {
     	return pointRepository.findAll();
     }
     
-    public BudgetPositionHeader saveHeader(CashBookDto cashBookDto, String name, Integer position) {
+    public BudgetPositionHeader saveHeader(CashBookDto cashBookDto, String name, Integer position)
+            throws CashBookNotFoundException {
 		BudgetPositionHeader header = new BudgetPositionHeader();
-		
-		// TODO: Handle if CashBook is not found. 
-		header.setCashBook(cashBookService.findById(cashBookDto.getId()).get());
+
+        CashBook cashBook = cashBookService.findById(cashBookDto.getId())
+                .orElseThrow(() -> new CashBookNotFoundException(cashBookDto.getId()));
+        header.setCashBook(cashBook);
 		header.setName(name);
 		header.setPosition(position);
 		header = headerRepository.save(header);
