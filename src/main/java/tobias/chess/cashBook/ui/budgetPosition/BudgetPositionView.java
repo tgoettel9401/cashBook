@@ -15,8 +15,8 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDto;
-import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDtoService;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
 import tobias.chess.cashBook.ui.MainLayout;
@@ -26,13 +26,13 @@ import tobias.chess.cashBook.ui.MainLayout;
 public class BudgetPositionView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private CashBookDtoService cashBookService;
-    private final BudgetPositionDtoService budgetPositionService;
+    private final BudgetPositionService budgetPositionService;
 
     private Select<CashBookDto> cashBookSelect = new Select<>();
 
-    private Grid<BudgetPositionDto> grid = new Grid<>(BudgetPositionDto.class);
+    private Grid<BudgetPosition> grid = new Grid<>(BudgetPosition.class);
 
-    public BudgetPositionView(CashBookDtoService cashBookService, BudgetPositionDtoService budgetPositionService) {
+    public BudgetPositionView(CashBookDtoService cashBookService, BudgetPositionService budgetPositionService) {
         this.cashBookService = cashBookService;
         this.budgetPositionService = budgetPositionService;
         addClassName("budget-position-view");
@@ -79,20 +79,24 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
 	private void configureGrid() {
         grid.addClassName("cash-book-entry-grid");
         grid.setSizeFull();
-        grid.setColumns("positionString", "header", "title", "point");
+        grid.removeAllColumns(); // TODO: Refactor so that removing is not necessary
+        grid.addColumn(BudgetPosition::getPosition).setHeader("Position");
+        grid.addColumn(BudgetPosition::getHeaderString).setHeader("Header");
+        grid.addColumn(BudgetPosition::getTitleString).setHeader("Title");
+        grid.addColumn(BudgetPosition::getPointString).setHeader("Point");
         grid.setHeightByRows(true);
-        Binder<BudgetPositionDto> binder = new Binder<>(BudgetPositionDto.class);
-        Editor<BudgetPositionDto> editor = grid.getEditor();
+        Binder<BudgetPosition> binder = new Binder<>(BudgetPosition.class);
+        Editor<BudgetPosition> editor = grid.getEditor();
         editor.setBinder(binder);
         editor.setBuffered(true);
     }
 
     private void updateList(CashBookDto cashBook) {
-        grid.setItems(budgetPositionService.findAllDtosForCashBookDto(cashBook));
+        grid.setItems(budgetPositionService.findAllByCashBookDto(cashBook));
     }
     
     private void handleSaveBudgetPosition(BudgetPositionDialog.SaveEvent event) {
-    	BudgetPositionDto budgetPosition = event.getBudgetPosition();
+    	BudgetPosition budgetPosition = event.getBudgetPosition();
     	updateList(budgetPosition.getCashBookDto());
     }
     

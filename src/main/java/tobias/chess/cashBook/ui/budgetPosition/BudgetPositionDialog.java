@@ -25,19 +25,18 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.shared.Registration;
 
-import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDto;
-import tobias.chess.cashBook.business.budgetPosition.BudgetPositionDtoService;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
-import tobias.chess.cashBook.ui.cashBook.CashBookDialog;
 
 public class BudgetPositionDialog extends FormLayout {
 	
-	private final BudgetPositionDtoService budgetPositionService;
+	private final BudgetPositionService budgetPositionService;
 	
-	public BudgetPositionDialog(BudgetPositionDtoService budgetPositionService) {
+	public BudgetPositionDialog(BudgetPositionService budgetPositionService) {
 		this.budgetPositionService = budgetPositionService;
 		loadView();
 	}
@@ -282,11 +281,11 @@ public class BudgetPositionDialog extends FormLayout {
         }
         
         if (saveIsPerformed) {
-        	BudgetPositionDto budgetPosition = new BudgetPositionDto();
+        	BudgetPosition budgetPosition = new BudgetPosition();
         	budgetPosition.setCashBookDto(cashBook);
-        	budgetPosition.setHeaderObject(header);
-        	budgetPosition.setTitleObject(title);
-        	budgetPosition.setPointObject(point);
+        	budgetPosition.setHeader(header);
+        	budgetPosition.setTitle(title);
+        	budgetPosition.setPoint(point);
         	fireEvent(new SaveEvent(this, budgetPosition));
         }
         	
@@ -315,12 +314,12 @@ public class BudgetPositionDialog extends FormLayout {
     }
     
     public static class SaveEvent extends ComponentEvent<BudgetPositionDialog> {
-    	private BudgetPositionDto budgetPosition; 
-        protected SaveEvent(BudgetPositionDialog source, BudgetPositionDto budgetPosition) {
+    	private BudgetPosition budgetPosition;
+        protected SaveEvent(BudgetPositionDialog source, BudgetPosition budgetPosition) {
             super(source, false);
             this.budgetPosition = budgetPosition;
         }
-        public BudgetPositionDto getBudgetPosition() {
+        public BudgetPosition getBudgetPosition() {
         	return budgetPosition;
         }
     }
