@@ -18,8 +18,6 @@ import com.google.common.collect.Lists;
 
 import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
 import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
-import tobias.chess.cashBook.business.budgetPosition.entry.BudgetPositionEntry;
-import tobias.chess.cashBook.business.budgetPosition.entry.BudgetPositionEntryRepository;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeaderRepository;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
@@ -43,8 +41,7 @@ public class Initialization implements InitializingBean {
     @Autowired private BudgetPositionHeaderRepository budgetPositionHeaderRepository;
     @Autowired private BudgetPositionTitleRepository budgetPositionTitleRepository;
     @Autowired private BudgetPositionPointRepository budgetPositionPointRepository;
-    @Autowired private BudgetPositionEntryRepository budgetPositionEntryRepository;
-
+    
     @Autowired private BudgetPositionService budgetPositionService;
 
     @Override
@@ -132,35 +129,27 @@ public class Initialization implements InitializingBean {
         title.setHeader(header);
         title = budgetPositionTitleRepository.save(title);
 
-        BudgetPositionPoint point = new BudgetPositionPoint();
-        point.setName("POINTONE");
-        point.setPosition(1);
-        point.setTitle(title);
-        point = budgetPositionPointRepository.save(point);
-
-        BudgetPositionEntry entryOne = new BudgetPositionEntry();
-        entryOne.setName("ENTRYONE");
-        entryOne.setPosition(1);
-        entryOne.setPoint(point);
-        entryOne = budgetPositionEntryRepository.save(entryOne);
-
-        BudgetPositionEntry entryTwo = new BudgetPositionEntry();
-        entryTwo.setName("ENTRYTWO");
-        entryTwo.setPosition(2);
-        entryTwo.setPoint(point);
-        entryTwo = budgetPositionEntryRepository.save(entryTwo);
+        BudgetPositionPoint pointOne = new BudgetPositionPoint();
+        pointOne.setName("POINTONE");
+        pointOne.setPosition(1);
+        pointOne.setTitle(title);
+        pointOne = budgetPositionPointRepository.save(pointOne);
+        
+        BudgetPositionPoint pointTwo = new BudgetPositionPoint();
+        pointTwo.setName("POINTTWO");
+        pointTwo.setPosition(2);
+        pointTwo.setTitle(title);
+        pointTwo = budgetPositionPointRepository.save(pointTwo);
 
         BudgetPosition budgetPositionOne = new BudgetPosition();
         budgetPositionOne.setHeader(header);
         budgetPositionOne.setTitle(title);
-        budgetPositionOne.setPoint(point);
-        budgetPositionOne.setEntry(entryOne);
+        budgetPositionOne.setPoint(pointOne);
 
         BudgetPosition budgetPositionTwo = new BudgetPosition();
         budgetPositionTwo.setHeader(header);
         budgetPositionTwo.setTitle(title);
-        budgetPositionTwo.setPoint(point);
-        budgetPositionTwo.setEntry(entryTwo);
+        budgetPositionTwo.setPoint(pointTwo);
 
         return Lists.newArrayList(budgetPositionOne, budgetPositionTwo);
 

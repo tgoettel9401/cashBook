@@ -1,12 +1,12 @@
 package tobias.chess.cashBook.business.budgetPosition.point;
 
-import lombok.Data;
-import lombok.ToString;
-import tobias.chess.cashBook.business.budgetPosition.entry.BudgetPositionEntry;
-import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
-import javax.persistence.*;
-import java.util.List;
+import lombok.Data;
+import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 
 @Entity
 @Data
@@ -22,9 +22,5 @@ public class BudgetPositionPoint {
 
     @ManyToOne
     private BudgetPositionTitle title;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "point", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BudgetPositionEntry> entries;
 
 }
