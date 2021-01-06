@@ -292,23 +292,85 @@ public class BudgetPositionDialog extends FormLayout {
 
     private void addBinderValidation() {
 
-    	// TODO: Extend with additional validators.
-    	// TODO: Also add validations on field-level.
-    	// TODO: Add validation that neither header, title nor point has Add & Skip since this is not possible.
-        // TODO: Add validation that for each header, title, point Name and Position is set if Add is active.
-    	// TODO: Add validation that nothing has an Add if a previous Skip was set. 
-    	// TODO: Add validation that for an add all previous have adds as well or select is set. 
-    	// TODO: Add validation that CashBook is set.
     	binder.withValidator((value, valueContext) -> {
-
+    	    // Cash-Book may not be empty.
+            if (value.getCashBook() == null)
+                return ValidationResult.error("Empty Cash-Book is not allowed!");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
             // At least one element (header, title or point) should be set to new.
             if (!(value.isAddHeader() || value.isAddTitle() || value.isAddPoint()))
                 return ValidationResult.error("At least one element needs to be added!");
-
-            return ValidationResult.ok();
-
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Header cannot be New and Skipped at the same time.
+            if (value.isAddHeader() && value.isSkipHeader())
+                return ValidationResult.error("Header is set with New and Skip. Only one checkbox can be set!");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Title cannot be New and Skipped at the same time.
+            if (value.isAddTitle() && value.isSkipTitle())
+                return ValidationResult.error("Title is set with New and Skip. Only one checkbox can be set!");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Point cannot be New and Skipped at the same time.
+            if (value.isAddPoint() && value.isSkipPoint())
+                return ValidationResult.error("Point is set with New and Skip. Only one checkbox can be set!");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having Add-Point true and either Point-Name or Point-Position null is not allowed.
+            if (value.isAddPoint() && (value.getPointPosition() == null || value.getPointName() == null))
+                return ValidationResult.error("Point is set with New, then both Point-Name and Point-Position must be set");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having Add-Title true and either Title-Name or Title-Position null is not allowed.
+            if (value.isAddTitle() && (value.getTitlePosition() == null || value.getTitleName() == null))
+                return ValidationResult.error("Title is set with New, then both Title-Name and Title-Position must be set");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having Add-Header true and either Header-Name or Header-Position null is not allowed.
+            if (value.isAddHeader() && (value.getHeaderPosition() == null || value.getHeaderName() == null))
+                return ValidationResult.error("Header is set with New, then both Header-Name and Header-Position must be set");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Adding new title but skipping header is not allowed.
+            if (value.isAddTitle() && value.isSkipHeader())
+                return ValidationResult.error("New Title should be added, then skipping Header is not allowed");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Adding new point but skipping either header or title is not allowed.
+            if (value.isAddPoint() && (value.isSkipHeader() || value.isSkipTitle()))
+                return ValidationResult.error("New Point should be added, then skipping Header or Title is not allowed");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having neither Add-Header nor Skip-Header, then Select must not be empty.
+            if (!value.isAddHeader() && !value.isSkipHeader() && (value.getHeaderFromSelect() == null))
+                return ValidationResult.error("Header is neither set as New nor as Skip, so Select must not be empty");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having neither Add-Title nor Skip-Title, then Select must not be empty.
+            if (!value.isAddTitle() && !value.isSkipTitle() && (value.getTitleFromSelect() == null))
+                return ValidationResult.error("Title is neither set as New nor as Skip, so Select must not be empty");
+            else
+                return ValidationResult.ok();
+        }).withValidator((value, valueContext) -> {
+            // Having neither Add-Point nor Skip-Point, then Select must not be empty.
+            if (!value.isAddPoint() && !value.isSkipPoint() && (value.getPointFromSelect() == null))
+                return ValidationResult.error("Point is neither set as New nor as Skip, so Select must not be empty");
+            else
+                return ValidationResult.ok();
         });
-
     }
     
     public static class SaveEvent extends ComponentEvent<BudgetPositionDialog> {
