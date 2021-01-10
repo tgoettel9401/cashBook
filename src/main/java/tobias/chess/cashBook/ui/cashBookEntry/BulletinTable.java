@@ -101,9 +101,12 @@ public class BulletinTable extends VerticalLayout {
         cashBookEntryGrid.getColumnByKey("valueDate").setEditorComponent(valueDateField);
 
         // Budget Position Column
-        cashBookEntryGrid.addColumn(cashBookEntry -> cashBookEntry.getBudgetPosition().getName())
-                .setHeader("Budget Position")
-                .setKey("budgetPosition");
+        cashBookEntryGrid.addColumn(cashBookEntry -> {
+            if (cashBookEntry.getBudgetPosition() != null)
+                return cashBookEntry.getBudgetPosition().getName();
+            else
+                return "";
+        }).setHeader("Budget Position").setKey("budgetPosition");
 
         // Buttons Column
         Collection<Button> editButtons = Collections

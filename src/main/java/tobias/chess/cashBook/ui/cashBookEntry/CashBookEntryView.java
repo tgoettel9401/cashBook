@@ -2,18 +2,31 @@ package tobias.chess.cashBook.ui.cashBookEntry;
 
 import com.google.common.collect.Maps;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.*;
 import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
 import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
+import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
+import tobias.chess.cashBook.business.csvImport.CsvImportService;
+import tobias.chess.cashBook.business.csvImport.MultipleCashBooksException;
 import tobias.chess.cashBook.ui.MainLayout;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 @Route(value = "cashBookEntry", layout = MainLayout.class)
@@ -23,6 +36,7 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
     private CashBookDtoService cashBookService;
     private CashBookEntryService cashBookEntryService;
     private BudgetPositionService budgetPositionService;
+    private CsvImportService csvImportService;
 
     private Select<CashBookDto> cashBookSelect = new Select<>();
 
@@ -30,10 +44,11 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
     private BudgetTable budgetTable;
 
     public CashBookEntryView(CashBookEntryService cashBookEntryService, CashBookDtoService cashBookService,
-                             BudgetPositionService budgetPositionService) {
+                             BudgetPositionService budgetPositionService, CsvImportService csvImportService) {
         this.cashBookEntryService = cashBookEntryService;
         this.cashBookService = cashBookService;
         this.budgetPositionService = budgetPositionService;
+        this.csvImportService = csvImportService;
         addClassName("cash-book-entry-view");
 
         loadView();
@@ -71,7 +86,9 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
             selectedPage.setVisible(true);
         });
 
-        add(header, cashBookSelect, tabs, bulletinTable, budgetTable);
+        HorizontalLayout filterAndButton = new HorizontalLayout(cashBookSelect, createCsvUpload());
+
+        add(header, filterAndButton, tabs, bulletinTable, budgetTable);
 
     }
 
@@ -84,6 +101,28 @@ public class CashBookEntryView extends VerticalLayout implements HasUrlParameter
     private void updateSelectEntries() {
         cashBookSelect.setItemLabelGenerator(CashBookDto::getName);
         cashBookSelect.setItems(cashBookService.findAllDtos());
+    }
+
+    private Component createCsvUpload() {
+        MemoryBuffer buffer = new MemoryBuffer();
+        Upload upload = new Upload(buffer);
+        upload.addSucceededListener(event -> handleFileUpload(buffer.getInputStream()));
+        return upload;
+    }
+
+    private void handleFileUpload(InputStream inputStream) {
+        try {
+            List<CashBookEntry> importedEntries = csvImportService.importSparkasseCsvsFromInputStream(inputStream);
+            System.out.println("Imported " + importedEntries.size() + " entries");
+        } catch (IOException | MultipleCashBooksException exception) {
+            Notification notification = new Notification();
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.add(new Span(exception.getMessage()));
+            Button closeButton = new Button("Close");
+            closeButton.addClickListener(event -> notification.close());
+            notification.add(closeButton);
+            notification.open();
+        }
     }
 
 }

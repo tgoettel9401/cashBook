@@ -144,7 +144,8 @@ public class CashBookEntryService {
         dto.setReceiverSender(entry.getCashPartnerName());
 
         dto.setEntry(entry);
-        dto.setBudgetPosition(budgetPositionService.createBudgetPosition(entry.getBudgetPosition()));
+        if (entry.getBudgetPosition() != null)
+            dto.setBudgetPosition(budgetPositionService.createBudgetPosition(entry.getBudgetPosition()));
 
         return dto;
     }
