@@ -108,7 +108,7 @@ public class BudgetPositionDialog extends FormLayout {
         headerAddCheckbox.addValueChangeListener(event -> handleHeaderCheckbox());
         headerSkipCheckbox.setLabel("Skip");
         headerSelect.setLabel("Headers");
-        headerSelect.setItemLabelGenerator(BudgetPositionHeader::getName);
+        headerSelect.setItemLabelGenerator(header -> "" + header.getName() + " (" + header.getPosition() + ")");
         headerTextField.setVisible(false);
         headerTextField.setLabel("Header-Name");
         headerNumberField.setVisible(false);
@@ -122,7 +122,7 @@ public class BudgetPositionDialog extends FormLayout {
         titleAddCheckbox.addValueChangeListener(event -> handleTitleCheckbox());
         titleSkipCheckbox.setLabel("Skip");
         titleSelect.setLabel("Titles");
-        titleSelect.setItemLabelGenerator(BudgetPositionTitle::getName);
+        titleSelect.setItemLabelGenerator(title -> "" + title.getName() + " (" + title.getPosition() + ")");
         titleTextField.setVisible(false);
         titleTextField.setLabel("Title-Name");
         titleNumberField.setVisible(false);
@@ -136,7 +136,7 @@ public class BudgetPositionDialog extends FormLayout {
         pointAddCheckbox.addValueChangeListener(event -> handlePointCheckbox());
         pointSkipCheckbox.setLabel("Skip");
         pointSelect.setLabel("Points");
-        pointSelect.setItemLabelGenerator(BudgetPositionPoint::getName);
+        pointSelect.setItemLabelGenerator(point -> "" + point.getName() + " (" + point.getPosition() + ")");
         pointTextField.setLabel("Point-Name");
         pointTextField.setVisible(false);
         pointNumberField.setLabel("Point-Position");

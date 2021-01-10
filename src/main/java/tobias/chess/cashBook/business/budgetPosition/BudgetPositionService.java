@@ -1,14 +1,9 @@
 package tobias.chess.cashBook.business.budgetPosition;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
-
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeaderRepository;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
@@ -21,10 +16,14 @@ import tobias.chess.cashBook.business.cashBook.CashBookNotFoundException;
 import tobias.chess.cashBook.business.cashBook.CashBookService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryBudgetPosition;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class BudgetPositionService {
-	
-	private final Logger logger = LoggerFactory.getLogger(BudgetPositionService.class);
+
+    private final Logger logger = LoggerFactory.getLogger(BudgetPositionService.class);
 
     private final BudgetPositionHeaderRepository headerRepository;
     private final BudgetPositionTitleRepository titleRepository;
@@ -54,25 +53,36 @@ public class BudgetPositionService {
 
             for (BudgetPositionHeader header : headers) {
 
-                List<BudgetPositionTitle>  titles = titleRepository.findAllByHeader(header);
-                
+                BudgetPosition headerPosition = new BudgetPosition();
+                headerPosition.setHeader(header);
+                headerPosition.setCashBookDto(cashBookDto);
+                positions.add(headerPosition);
+
+                List<BudgetPositionTitle> titles = titleRepository.findAllByHeader(header);
+
                 if (titles.isEmpty()) {
-                	BudgetPosition position = new BudgetPosition();
+                    BudgetPosition position = new BudgetPosition();
                     position.setCashBookDto(cashBookDto);
-                	position.setHeader(header);
-                	positions.add(position);
+                    position.setHeader(header);
+                    positions.add(position);
                 }
 
                 for (BudgetPositionTitle title : titles) {
 
+                    BudgetPosition titlePosition = new BudgetPosition();
+                    titlePosition.setCashBookDto(cashBookDto);
+                    titlePosition.setHeader(header);
+                    titlePosition.setTitle(title);
+                    positions.add(titlePosition);
+
                     List<BudgetPositionPoint> points = pointRepository.findAllByTitle(title);
 
                     if (points.isEmpty()) {
-                    	BudgetPosition position = new BudgetPosition();
-                    	position.setCashBookDto(cashBookDto);
-                    	position.setHeader(header);
-                    	position.setTitle(title);
-                    	positions.add(position);
+                        BudgetPosition position = new BudgetPosition();
+                        position.setCashBookDto(cashBookDto);
+                        position.setHeader(header);
+                        position.setTitle(title);
+                        positions.add(position);
                     }
                     
                     for (BudgetPositionPoint point : points) {
@@ -89,6 +99,8 @@ public class BudgetPositionService {
             }
 
         }
+
+        positions.sort(Comparator.comparing(BudgetPosition::getPosition));
 
         return positions;
     }
@@ -131,24 +143,31 @@ public class BudgetPositionService {
 		header.setName(name);
 		header.setPosition(position);
 		header = headerRepository.save(header);
-		
-		return header;
-	}
-    
+
+        return header;
+    }
+
     public BudgetPositionTitle saveTitle(BudgetPositionHeader header, String name, Integer position) {
-		BudgetPositionTitle title = new BudgetPositionTitle();
-		title.setHeader(header);
-		title.setName(name);
-		title.setPosition(position);
-		return titleRepository.save(title);
-	}
-    
+        BudgetPositionTitle title = new BudgetPositionTitle();
+        title.setHeader(header);
+        title.setName(name);
+        title.setPosition(position);
+        return titleRepository.save(title);
+    }
+
     public BudgetPositionPoint savePoint(BudgetPositionTitle title, String name, Integer position) {
-    	BudgetPositionPoint point = new BudgetPositionPoint();
-    	point.setTitle(title);
-    	point.setName(name);
-    	point.setPosition(position);
-    	return pointRepository.save(point);
+        BudgetPositionPoint point = new BudgetPositionPoint();
+        point.setTitle(title);
+        point.setName(name);
+        point.setPosition(position);
+        return pointRepository.save(point);
+    }
+
+    public BudgetPosition findByCashBookDtoAndPosition(CashBookDto cashBookDto, String position) throws BudgetPositionNotFoundException {
+        List<BudgetPosition> positions = findAllByCashBookDto(cashBookDto);
+        return positions.stream()
+                .filter(budgetPosition -> budgetPosition.getPosition().equals(position))
+                .findFirst().orElseThrow(() -> new BudgetPositionNotFoundException(cashBookDto.getId(), position));
     }
 
 }

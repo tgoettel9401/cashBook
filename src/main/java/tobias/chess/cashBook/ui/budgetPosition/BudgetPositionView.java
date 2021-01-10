@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.H1;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Route(value = "budgetPosition", layout = MainLayout.class)
 @PageTitle("Budget-Positions")
+@CssImport(value = "./styles/shared-styles.css", themeFor = "vaadin-grid")
 public class BudgetPositionView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private CashBookDtoService cashBookService;
@@ -74,8 +76,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
     private Component createButtons() {
     	Button addBudgetPosition = new Button("Add new Budget-Position");
     	addBudgetPosition.addClickListener(event -> openAddBudgetPositionDialog());
-    	HorizontalLayout layout = new HorizontalLayout(addBudgetPosition);
-    	return layout;
+        return new HorizontalLayout(addBudgetPosition);
     }
 
 	private void configureGrid() {
@@ -86,6 +87,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
         grid.addColumn(BudgetPosition::getTitleString).setHeader("Title");
         grid.addColumn(BudgetPosition::getPointString).setHeader("Point");
         grid.setHeightByRows(true);
+
         Binder<BudgetPosition> binder = new Binder<>(BudgetPosition.class);
         Editor<BudgetPosition> editor = grid.getEditor();
         editor.setBinder(binder);
@@ -94,6 +96,18 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
 
     private void updateList(CashBookDto cashBook) {
         grid.setItems(budgetPositionService.findAllByCashBookDto(cashBook));
+        grid.setClassNameGenerator(budgetPosition -> {
+            switch (budgetPosition.getLevel()) {
+                case HEADER:
+                    return "budget-position-header";
+                case TITLE:
+                    return "budget-position-title";
+                case POINT:
+                    return "budget-position-point";
+                default:
+                    return "";
+            }
+        });
     }
     
     private void handleSaveBudgetPosition(BudgetPositionDialog.SaveEvent event) {

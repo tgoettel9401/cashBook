@@ -17,9 +17,15 @@ public class BudgetPosition {
     public String getName() {
         String name = "";
         switch (getLevel()) {
-            case 1: name = header.getName(); break;
-            case 2: name = title.getName(); break;
-            case 3: name = point.getName(); break;
+            case HEADER:
+                name = header.getName();
+                break;
+            case TITLE:
+                name = title.getName();
+                break;
+            case POINT:
+                name = point.getName();
+                break;
         }
         return name;
     }
@@ -62,7 +68,11 @@ public class BudgetPosition {
             return "";
     }
 
-    private Integer getLevel() {
+    public BudgetPositionLevel getLevel() {
+        return BudgetPositionLevel.of(getLevelInteger());
+    }
+
+    private Integer getLevelInteger() {
         Integer level = 0;
         if (header != null)
             level++;

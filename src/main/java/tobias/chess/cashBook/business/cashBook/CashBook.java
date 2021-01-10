@@ -1,16 +1,19 @@
 package tobias.chess.cashBook.business.cashBook;
 
 import com.google.common.collect.Lists;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class CashBook {
 
     @Id
@@ -29,4 +32,16 @@ public class CashBook {
     @OneToMany(mappedBy = "cashBook", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CashBookEntry> cashBookEntries = Lists.newArrayList();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CashBook)) return false;
+        CashBook cashBook = (CashBook) o;
+        return getId().equals(cashBook.getId()) && Objects.equals(getAccountNumber(), cashBook.getAccountNumber()) && Objects.equals(getName(), cashBook.getName()) && Objects.equals(getInitialWealth(), cashBook.getInitialWealth()) && Objects.equals(getCalculatedInitialWealth(), cashBook.getCalculatedInitialWealth());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getAccountNumber(), getName(), getInitialWealth(), getCalculatedInitialWealth());
+    }
 }

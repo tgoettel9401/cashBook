@@ -159,6 +159,11 @@ public class BulletinTable extends VerticalLayout {
     private void editBudgetPosition(CashBookEntryDto cashBookEntry) {
         BudgetPositionEditDialog dialog = new BudgetPositionEditDialog(budgetPositionService, cashBookEntryService,
                 cashBookEntry, cashBook);
+        dialog.addListener(BudgetPositionEditDialog.SaveEvent.class, this::handleSaveEvent);
+    }
+
+    private void handleSaveEvent(BudgetPositionEditDialog.SaveEvent event) {
+        updateList(cashBook);
     }
 
 }

@@ -1,15 +1,18 @@
 package tobias.chess.cashBook.business.budgetPosition.point;
 
+import lombok.Getter;
+import lombok.Setter;
+import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import lombok.Data;
-import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class BudgetPositionPoint {
 
     @Id
@@ -23,4 +26,16 @@ public class BudgetPositionPoint {
     @ManyToOne
     private BudgetPositionTitle title;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BudgetPositionPoint)) return false;
+        BudgetPositionPoint that = (BudgetPositionPoint) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(position, that.position) && Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, position, title);
+    }
 }

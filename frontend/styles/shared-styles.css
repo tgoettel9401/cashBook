@@ -18,6 +18,22 @@
     }
 }
 
+/* Budget position view */
+
+[part~="cell"].budget-position-header {
+    background-color: lemonchiffon;
+    font-weight: bold;
+}
+
+[part~="cell"].budget-position-title {
+    background-color: azure;
+    font-weight: bold;
+}
+
+[part~="cell"].budget-position-point {
+    font-style: italic;
+}
+
 /* Main layout */
 
 a[highlight] {
