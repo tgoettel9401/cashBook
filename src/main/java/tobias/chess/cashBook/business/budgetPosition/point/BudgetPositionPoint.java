@@ -3,11 +3,10 @@ package tobias.chess.cashBook.business.budgetPosition.point;
 import lombok.Getter;
 import lombok.Setter;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
+import tobias.chess.cashBook.util.ListToStringConverter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +21,9 @@ public class BudgetPositionPoint {
     private String name;
 
     private Integer position;
+
+    @Convert(converter = ListToStringConverter.class)
+    private List<String> tags;
 
     @ManyToOne
     private BudgetPositionTitle title;

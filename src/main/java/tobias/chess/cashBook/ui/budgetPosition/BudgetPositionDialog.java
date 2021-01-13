@@ -1,5 +1,6 @@
 package tobias.chess.cashBook.ui.budgetPosition;
 
+import com.google.common.collect.Lists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -50,6 +51,7 @@ public class BudgetPositionDialog extends FormLayout {
 	Select<BudgetPositionHeader> headerSelect = new Select<>();
 	TextField headerTextField = new TextField();
 	IntegerField headerNumberField = new IntegerField();
+	TextField headerTagsField = new TextField();
 	
 	// Title
 	Checkbox titleAddCheckbox = new Checkbox();
@@ -57,6 +59,7 @@ public class BudgetPositionDialog extends FormLayout {
 	Select<BudgetPositionTitle> titleSelect = new Select<>();
 	TextField titleTextField = new TextField();
 	IntegerField titleNumberField = new IntegerField();
+	TextField titleTagsField = new TextField();
 	
 	// Point
 	Checkbox pointAddCheckbox = new Checkbox();
@@ -64,6 +67,7 @@ public class BudgetPositionDialog extends FormLayout {
 	Select<BudgetPositionPoint> pointSelect = new Select<>();
 	TextField pointTextField = new TextField();
 	IntegerField pointNumberField = new IntegerField();
+	TextField pointTagsField = new TextField();
     
 	// Buttons
     Button saveButton = new Button("Save");
@@ -102,45 +106,51 @@ public class BudgetPositionDialog extends FormLayout {
         layout.add(cashBookSelect);
 
         HorizontalLayout headerLayout = new HorizontalLayout(headerAddCheckbox, headerSkipCheckbox,
-                headerSelect, headerTextField, headerNumberField);
+                headerSelect, headerTextField, headerNumberField, headerTagsField);
         headerLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         headerAddCheckbox.setLabel("New");
         headerAddCheckbox.addValueChangeListener(event -> handleHeaderCheckbox());
         headerSkipCheckbox.setLabel("Skip");
         headerSelect.setLabel("Headers");
         headerSelect.setItemLabelGenerator(header -> "" + header.getName() + " (" + header.getPosition() + ")");
+        headerSelect.addValueChangeListener(event -> handleHeaderSelectValueChanged(event.getValue()));
         headerTextField.setVisible(false);
         headerTextField.setLabel("Header-Name");
         headerNumberField.setVisible(false);
         headerNumberField.setLabel("Header-Position");
+        headerTagsField.setLabel("Header-Tags");
         layout.add(headerLayout);
 
         HorizontalLayout titleLayout = new HorizontalLayout(titleAddCheckbox, titleSkipCheckbox,
-                titleSelect, titleTextField, titleNumberField);
+                titleSelect, titleTextField, titleNumberField, titleTagsField);
         titleLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         titleAddCheckbox.setLabel("New");
         titleAddCheckbox.addValueChangeListener(event -> handleTitleCheckbox());
         titleSkipCheckbox.setLabel("Skip");
         titleSelect.setLabel("Titles");
         titleSelect.setItemLabelGenerator(title -> "" + title.getName() + " (" + title.getPosition() + ")");
+        titleSelect.addValueChangeListener(event -> handleTitleSelectValueChanged(event.getValue()));
         titleTextField.setVisible(false);
         titleTextField.setLabel("Title-Name");
         titleNumberField.setVisible(false);
         titleNumberField.setLabel("Title-Position");
+        titleTagsField.setLabel("Title-Tags");
         layout.add(titleLayout);
 
         HorizontalLayout pointLayout = new HorizontalLayout(pointAddCheckbox, pointSkipCheckbox,
-                pointSelect, pointTextField, pointNumberField);
+                pointSelect, pointTextField, pointNumberField, pointTagsField);
         pointLayout.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
         pointAddCheckbox.setLabel("New");
         pointAddCheckbox.addValueChangeListener(event -> handlePointCheckbox());
         pointSkipCheckbox.setLabel("Skip");
         pointSelect.setLabel("Points");
         pointSelect.setItemLabelGenerator(point -> "" + point.getName() + " (" + point.getPosition() + ")");
+        pointSelect.addValueChangeListener(event -> handlePointSelectValueChanged(event.getValue()));
         pointTextField.setLabel("Point-Name");
         pointTextField.setVisible(false);
         pointNumberField.setLabel("Point-Position");
         pointNumberField.setVisible(false);
+        pointTagsField.setLabel("Point-Tags");
         layout.add(pointLayout);
 
         binder.forField(cashBookSelect).bind("cashBook");
@@ -159,11 +169,26 @@ public class BudgetPositionDialog extends FormLayout {
         binder.forField(headerNumberField).bind("headerPosition");
         binder.forField(titleNumberField).bind("titlePosition");
         binder.forField(pointNumberField).bind("pointPosition");
+        binder.forField(headerTagsField).bind("headerTags");
+        binder.forField(titleTagsField).bind("titleTags");
+        binder.forField(pointTagsField).bind("pointTags");
 
         addBinderValidation();
 
         return layout;
 
+    }
+
+    private void handleHeaderSelectValueChanged(BudgetPositionHeader selectedHeader) {
+        headerTagsField.setValue(convertTagsListToString(selectedHeader.getTags()));
+    }
+
+    private void handleTitleSelectValueChanged(BudgetPositionTitle selectedTitle) {
+        titleTagsField.setValue(convertTagsListToString(selectedTitle.getTags()));
+    }
+
+    private void handlePointSelectValueChanged(BudgetPositionPoint selectPoint) {
+        pointTagsField.setValue(convertTagsListToString(selectPoint.getTags()));
     }
 
     private Component createButtonLayout() {
@@ -189,11 +214,14 @@ public class BudgetPositionDialog extends FormLayout {
         	headerSelect.setVisible(false);
         	headerTextField.setVisible(true);
         	headerNumberField.setVisible(true);
+        	headerTagsField.setValue("");
     	}
     	else {
     		headerSelect.setVisible(true);
     		headerTextField.setVisible(false);
     		headerNumberField.setVisible(false);
+    		if (headerSelect.getValue() != null)
+    		    headerTagsField.setValue(convertTagsListToString(headerSelect.getValue().getTags()));
     	}
     }
     
@@ -202,11 +230,14 @@ public class BudgetPositionDialog extends FormLayout {
         	titleSelect.setVisible(false);
         	titleTextField.setVisible(true);
         	titleNumberField.setVisible(true);
+        	titleTagsField.setValue("");
     	}
     	else {
     		titleSelect.setVisible(true);
     		titleTextField.setVisible(false);
     		titleNumberField.setVisible(false);
+    		if (titleSelect.getValue() != null)
+    		    titleTagsField.setValue(convertTagsListToString(titleSelect.getValue().getTags()));
     	}
     }
 
@@ -215,11 +246,14 @@ public class BudgetPositionDialog extends FormLayout {
     		pointSelect.setVisible(false);
         	pointTextField.setVisible(true);
         	pointNumberField.setVisible(true);
+        	pointTagsField.setValue("");
     	}
     	else {
     		pointSelect.setVisible(true);
     		pointTextField.setVisible(false);
     		pointNumberField.setVisible(false);
+    		if (pointSelect.getValue() != null)
+    		    pointTagsField.setValue(convertTagsListToString(pointSelect.getValue().getTags()));
     	}
     }
     
@@ -243,7 +277,8 @@ public class BudgetPositionDialog extends FormLayout {
             if (value.isAddHeader()) {
                 String name = headerTextField.getValue();
                 Integer position = headerNumberField.getValue();
-                header = budgetPositionService.saveHeader(cashBook, name, position);
+                List<String> tags = convertTagsStringToList(headerTagsField.getValue());
+                header = budgetPositionService.saveHeader(cashBook, name, position, tags);
                 saveIsPerformed = true;
             }
             else {
@@ -254,7 +289,8 @@ public class BudgetPositionDialog extends FormLayout {
             if (value.isAddTitle()) {
                 String name = titleTextField.getValue();
                 Integer position = titleNumberField.getValue();
-                title = budgetPositionService.saveTitle(header, name, position);
+                List<String> tags = convertTagsStringToList(titleTagsField.getValue());
+                title = budgetPositionService.saveTitle(header, name, position, tags);
                 saveIsPerformed = true;
             }
             else {
@@ -265,7 +301,8 @@ public class BudgetPositionDialog extends FormLayout {
             if (value.isAddPoint()) {
                 String name = pointTextField.getValue();
                 Integer position = pointNumberField.getValue();
-                point = budgetPositionService.savePoint(title, name, position);
+                List<String> tags = convertTagsStringToList(pointTagsField.getValue());
+                point = budgetPositionService.savePoint(title, name, position, tags);
                 saveIsPerformed = true;
             }
             else {
@@ -371,6 +408,29 @@ public class BudgetPositionDialog extends FormLayout {
             else
                 return ValidationResult.ok();
         });
+    }
+
+    private List<String> convertTagsStringToList(String tagsString) {
+        List<String> tags = Lists.newArrayList();
+        String[] splitTags = tagsString.split(";");
+        for (String splitTag : splitTags)
+            tags.add(splitTag.trim());
+        return tags;
+    }
+
+    private String convertTagsListToString(List<String> tags) {
+        String returnString = "";
+        int counter = 1;
+        int size = tags.size();
+        for (String tag : tags) {
+            if (counter < size) {
+                returnString = returnString.concat(tag + ", ");
+            }
+            else
+                returnString = returnString.concat(tag);
+            counter++;
+        }
+        return returnString;
     }
     
     public static class SaveEvent extends ComponentEvent<BudgetPositionDialog> {

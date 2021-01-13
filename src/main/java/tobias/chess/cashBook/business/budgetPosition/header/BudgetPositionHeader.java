@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.cashBook.CashBook;
+import tobias.chess.cashBook.util.ListToStringConverter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -24,6 +25,9 @@ public class BudgetPositionHeader {
 
     @ManyToOne
     private CashBook cashBook;
+
+    @Convert(converter = ListToStringConverter.class)
+    private List<String> tags;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "header", cascade = CascadeType.REMOVE, orphanRemoval = true)

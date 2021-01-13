@@ -36,4 +36,9 @@ public class BudgetPositionDialogValue {
 	private Integer titlePosition;
 	private Integer pointPosition;
 
+	// Tags-Fields
+	private String headerTags;
+	private String titleTags;
+	private String pointTags;
+
 }

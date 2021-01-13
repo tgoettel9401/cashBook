@@ -121,18 +121,21 @@ public class Initialization implements InitializingBean {
         header.setCashBook(cashBook);
         header.setName("FIRSTHEADER");
         header.setPosition(1);
+        header.setTags(Lists.newArrayList("Tag1, Tag2"));
         header = budgetPositionHeaderRepository.save(header);
 
         BudgetPositionTitle title = new BudgetPositionTitle();
         title.setName("TITLEONE");
         title.setPosition(1);
         title.setHeader(header);
+        title.setTags(Lists.newArrayList("Tag3"));
         title = budgetPositionTitleRepository.save(title);
 
         BudgetPositionPoint pointOne = new BudgetPositionPoint();
         pointOne.setName("POINTONE");
         pointOne.setPosition(1);
         pointOne.setTitle(title);
+        pointOne.setTags(Lists.newArrayList("Tag4"));
         pointOne = budgetPositionPointRepository.save(pointOne);
         
         BudgetPositionPoint pointTwo = new BudgetPositionPoint();

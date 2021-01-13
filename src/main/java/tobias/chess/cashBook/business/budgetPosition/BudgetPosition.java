@@ -1,10 +1,13 @@
 package tobias.chess.cashBook.business.budgetPosition;
 
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
 import tobias.chess.cashBook.business.budgetPosition.header.BudgetPositionHeader;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.cashBook.CashBookDto;
+
+import java.util.List;
 
 @Data
 public class BudgetPosition {
@@ -13,6 +16,7 @@ public class BudgetPosition {
     private BudgetPositionHeader header;
     private BudgetPositionTitle title;
     private BudgetPositionPoint point;
+    private List<String> tags = Lists.newArrayList();
 
     public String getName() {
         String name = "";
@@ -70,6 +74,21 @@ public class BudgetPosition {
 
     public BudgetPositionLevel getLevel() {
         return BudgetPositionLevel.of(getLevelInteger());
+    }
+
+    public String getTagsString() {
+        String tagString = "";
+        int counter = 1;
+        int size = tags.size();
+        for (String tag : tags) {
+            if (counter < size) {
+                tagString = tagString.concat(tag + ", ");
+            } else {
+                tagString = tagString.concat(tag);
+            }
+            counter++;
+        }
+        return tagString;
     }
 
     private Integer getLevelInteger() {

@@ -86,6 +86,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
         grid.addColumn(BudgetPosition::getHeaderString).setHeader("Header");
         grid.addColumn(BudgetPosition::getTitleString).setHeader("Title");
         grid.addColumn(BudgetPosition::getPointString).setHeader("Point");
+        grid.addColumn(BudgetPosition::getTagsString).setHeader("Tags");
         grid.setHeightByRows(true);
 
         Binder<BudgetPosition> binder = new Binder<>(BudgetPosition.class);

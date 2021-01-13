@@ -1,5 +1,6 @@
 package tobias.chess.cashBook.integrationTests;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,9 +39,9 @@ class BudgetPositionServiceTest {
         cashBook = cashBookService.save(cashBook);
         CashBookDto cashBookDto = cashBookDtoService.createCashBookDtoFromCashBook(cashBook);
 
-        BudgetPositionHeader header = budgetPositionService.saveHeader(cashBookDto, "Header", 1);
-        BudgetPositionTitle title = budgetPositionService.saveTitle(header, "Header", 1);
-        BudgetPositionPoint point = budgetPositionService.savePoint(title, "Header", 1);
+        BudgetPositionHeader header = budgetPositionService.saveHeader(cashBookDto, "Header", 1, Lists.emptyList());
+        BudgetPositionTitle title = budgetPositionService.saveTitle(header, "Header", 1, Lists.emptyList());
+        BudgetPositionPoint point = budgetPositionService.savePoint(title, "Header", 1, Lists.emptyList());
 
         List<BudgetPosition> budgetPositionList = budgetPositionService.findAllByCashBookDto(cashBookDto).stream()
                 .filter(p -> p.getLevel().equals(BudgetPositionLevel.POINT))

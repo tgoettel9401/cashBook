@@ -56,16 +56,10 @@ public class BudgetPositionService {
                 BudgetPosition headerPosition = new BudgetPosition();
                 headerPosition.setHeader(header);
                 headerPosition.setCashBookDto(cashBookDto);
+                headerPosition.getTags().addAll(header.getTags());
                 positions.add(headerPosition);
 
                 List<BudgetPositionTitle> titles = titleRepository.findAllByHeader(header);
-
-                if (titles.isEmpty()) {
-                    BudgetPosition position = new BudgetPosition();
-                    position.setCashBookDto(cashBookDto);
-                    position.setHeader(header);
-                    positions.add(position);
-                }
 
                 for (BudgetPositionTitle title : titles) {
 
@@ -73,17 +67,11 @@ public class BudgetPositionService {
                     titlePosition.setCashBookDto(cashBookDto);
                     titlePosition.setHeader(header);
                     titlePosition.setTitle(title);
+                    titlePosition.getTags().addAll(header.getTags());
+                    titlePosition.getTags().addAll(title.getTags());
                     positions.add(titlePosition);
 
                     List<BudgetPositionPoint> points = pointRepository.findAllByTitle(title);
-
-                    if (points.isEmpty()) {
-                        BudgetPosition position = new BudgetPosition();
-                        position.setCashBookDto(cashBookDto);
-                        position.setHeader(header);
-                        position.setTitle(title);
-                        positions.add(position);
-                    }
                     
                     for (BudgetPositionPoint point : points) {
                     	BudgetPosition position = new BudgetPosition();
@@ -91,6 +79,9 @@ public class BudgetPositionService {
                         position.setHeader(header);
                         position.setTitle(title);
                         position.setPoint(point);
+                        position.getTags().addAll(header.getTags());
+                        position.getTags().addAll(title.getTags());
+                        position.getTags().addAll(point.getTags());
                         positions.add(position);
                     }
 
@@ -133,7 +124,7 @@ public class BudgetPositionService {
     	return pointRepository.findAll();
     }
     
-    public BudgetPositionHeader saveHeader(CashBookDto cashBookDto, String name, Integer position)
+    public BudgetPositionHeader saveHeader(CashBookDto cashBookDto, String name, Integer position, List<String> tags)
             throws CashBookNotFoundException {
 		BudgetPositionHeader header = new BudgetPositionHeader();
 
@@ -142,24 +133,27 @@ public class BudgetPositionService {
         header.setCashBook(cashBook);
 		header.setName(name);
 		header.setPosition(position);
+		header.setTags(tags);
 		header = headerRepository.save(header);
 
         return header;
     }
 
-    public BudgetPositionTitle saveTitle(BudgetPositionHeader header, String name, Integer position) {
+    public BudgetPositionTitle saveTitle(BudgetPositionHeader header, String name, Integer position, List<String> tags) {
         BudgetPositionTitle title = new BudgetPositionTitle();
         title.setHeader(header);
         title.setName(name);
         title.setPosition(position);
+        title.setTags(tags);
         return titleRepository.save(title);
     }
 
-    public BudgetPositionPoint savePoint(BudgetPositionTitle title, String name, Integer position) {
+    public BudgetPositionPoint savePoint(BudgetPositionTitle title, String name, Integer position, List<String> tags) {
         BudgetPositionPoint point = new BudgetPositionPoint();
         point.setTitle(title);
         point.setName(name);
         point.setPosition(position);
+        point.setTags(tags);
         return pointRepository.save(point);
     }
 
