@@ -3,8 +3,13 @@ package tobias.chess.cashBook.business.csvImport;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPosition;
+import tobias.chess.cashBook.business.budgetPosition.BudgetPositionService;
+import tobias.chess.cashBook.business.cashBook.CashBookDto;
+import tobias.chess.cashBook.business.cashBook.CashBookDtoService;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntry;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryService;
 import tobias.chess.cashBook.business.cashBookFile.CashBookFile;
@@ -20,10 +25,15 @@ import java.util.stream.Collectors;
 @Service
 public class CsvImportService {
 
+    private final CashBookDtoService cashBookDtoService;
     private final CashBookEntryService cashBookEntryService;
+    private final BudgetPositionService budgetPositionService;
 
-    public CsvImportService(CashBookEntryService cashBookEntryService) {
+    public CsvImportService(CashBookEntryService cashBookEntryService, BudgetPositionService budgetPositionService,
+                            CashBookDtoService cashBookDtoService) {
+        this.cashBookDtoService = cashBookDtoService;
         this.cashBookEntryService = cashBookEntryService;
+        this.budgetPositionService = budgetPositionService;
     }
 
     public CashBookFile saveFile(MultipartFile file) {
@@ -48,8 +58,15 @@ public class CsvImportService {
         List<CashBookEntry> cashBookEntries =
                 cashBookEntryService.transformCsvsToCashBookEntries(cashBookEntryDto);
 
+        // Check if a business-position can be attached.
+        // TODO: When importing, first display the created Cash-Book-Entries and then finally create them. Allow user to edit the automatically set budget-position.
+        List<CashBookEntry> cashBookEntriesIncludingBudgetPositions = Lists.newArrayList();
+        cashBookEntries.forEach(
+                entry -> cashBookEntriesIncludingBudgetPositions.add(enhanceEntryByBudgetPosition(entry))
+        );
+
         // Add the new Entries to the database and return the final entities.
-        return cashBookEntryService.saveAll(cashBookEntries);
+        return cashBookEntryService.saveAll(cashBookEntriesIncludingBudgetPositions);
     }
 
     public List<SparkasseCsv> createSparkasseCsvs(InputStream inputStream) throws IOException {
@@ -62,6 +79,17 @@ public class CsvImportService {
 
     private InputStreamReader convertLatin1InputStreamToUtf8(InputStream latin1Stream) {
         return new InputStreamReader(latin1Stream, StandardCharsets.ISO_8859_1);
+    }
+
+    private CashBookEntry enhanceEntryByBudgetPosition(CashBookEntry entry) {
+        CashBookDto cashBookDto = cashBookDtoService.createCashBookDtoFromCashBook(entry.getCashBook());
+        List<BudgetPosition> potentialBudgetPositions = budgetPositionService.findPositionsByTags(
+                cashBookDto, entry.getPurpose(), entry.getBookingText()
+        );
+        potentialBudgetPositions.stream().findFirst().ifPresent(
+                budgetPosition -> entry.setBudgetPosition(budgetPositionService.createCashBookEntryBudgetPosition(budgetPosition))
+        );
+        return entry;
     }
 
 }

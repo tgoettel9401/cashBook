@@ -10,15 +10,13 @@ import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPoint;
 import tobias.chess.cashBook.business.budgetPosition.point.BudgetPositionPointRepository;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitle;
 import tobias.chess.cashBook.business.budgetPosition.title.BudgetPositionTitleRepository;
-import tobias.chess.cashBook.business.cashBook.CashBook;
-import tobias.chess.cashBook.business.cashBook.CashBookDto;
-import tobias.chess.cashBook.business.cashBook.CashBookNotFoundException;
-import tobias.chess.cashBook.business.cashBook.CashBookService;
+import tobias.chess.cashBook.business.cashBook.*;
 import tobias.chess.cashBook.business.cashBookEntry.CashBookEntryBudgetPosition;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BudgetPositionService {
@@ -168,4 +166,23 @@ public class BudgetPositionService {
         return pointRepository.findAllByTitle(title);
     }
 
+    public List<BudgetPosition> findPositionsByTags(CashBookDto cashBookDto, String... tags) {
+        List<BudgetPosition> allBudgetPositions = findAllByCashBookDto(cashBookDto);
+        List<BudgetPosition> budgetPositionsToReturn = Lists.newArrayList();
+        for (String tag : tags) {
+            List<BudgetPosition> tempPositions = Lists.newArrayList(allBudgetPositions);
+            budgetPositionsToReturn.addAll(tempPositions.stream().filter(
+                    budgetPosition -> {
+                        List<String> positionTags = budgetPosition.getTags();
+                        for (String positionTag : positionTags) {
+                            if (tag.contains(positionTag)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+            ).collect(Collectors.toList()));
+        }
+        return budgetPositionsToReturn;
+    }
 }
