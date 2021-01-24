@@ -81,14 +81,6 @@ public class BudgetPositionDialog extends FormLayout {
     public void setHeaderItems(List<BudgetPositionHeader> headers) {
     	headerSelect.setItems(headers);
     }
-    
-    public void setTitleItems(List<BudgetPositionTitle> titles) {
-    	titleSelect.setItems(titles);
-    }
-    
-    public void setPointItems(List<BudgetPositionPoint> points) {
-    	pointSelect.setItems(points);
-    }
 
     private void loadView() {
         dialog = new Dialog();
@@ -181,10 +173,12 @@ public class BudgetPositionDialog extends FormLayout {
 
     private void handleHeaderSelectValueChanged(BudgetPositionHeader selectedHeader) {
         headerTagsField.setValue(convertTagsListToString(selectedHeader.getTags()));
+        titleSelect.setItems(budgetPositionService.findAllTitlesByHeader(selectedHeader));
     }
 
     private void handleTitleSelectValueChanged(BudgetPositionTitle selectedTitle) {
         titleTagsField.setValue(convertTagsListToString(selectedTitle.getTags()));
+        pointSelect.setItems(budgetPositionService.findAllPointsByTitle(selectedTitle));
     }
 
     private void handlePointSelectValueChanged(BudgetPositionPoint selectPoint) {

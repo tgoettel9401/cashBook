@@ -144,9 +144,7 @@ public class BudgetPositionView extends VerticalLayout implements HasUrlParamete
         else {
             BudgetPositionDialog dialog = new BudgetPositionDialog(budgetPositionService);
             dialog.setCashBook(cashBookSelect.getValue());
-            dialog.setHeaderItems(budgetPositionService.findAllHeaders());
-            dialog.setTitleItems(budgetPositionService.findAllTitles());
-            dialog.setPointItems(budgetPositionService.findAllPoints());
+            dialog.setHeaderItems(budgetPositionService.findAllHeadersByCashBookDto(cashBookSelect.getValue()));
             dialog.addListener(BudgetPositionDialog.SaveEvent.class, this::handleSaveBudgetPosition);
             dialog.addListener(BudgetPositionDialog.SaveFailedEvent.class, this::handleSaveBudgetPositionFailed);
         }

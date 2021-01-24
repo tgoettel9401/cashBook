@@ -112,18 +112,6 @@ public class BudgetPositionService {
         return budgetPosition;
     }
     
-    public List<BudgetPositionHeader> findAllHeaders() {
-    	return headerRepository.findAll();
-    }
-    
-    public List<BudgetPositionTitle> findAllTitles() {
-    	return titleRepository.findAll();
-    }
-    
-    public List<BudgetPositionPoint> findAllPoints() {
-    	return pointRepository.findAll();
-    }
-    
     public BudgetPositionHeader saveHeader(CashBookDto cashBookDto, String name, Integer position, List<String> tags)
             throws CashBookNotFoundException {
 		BudgetPositionHeader header = new BudgetPositionHeader();
@@ -162,6 +150,22 @@ public class BudgetPositionService {
         return positions.stream()
                 .filter(budgetPosition -> budgetPosition.getPosition().equals(position))
                 .findFirst().orElseThrow(() -> new BudgetPositionNotFoundException(cashBookDto.getId(), position));
+    }
+
+    public List<BudgetPositionHeader> findAllHeadersByCashBookDto(CashBookDto cashBookDto) {
+        List<BudgetPositionHeader> headers = Lists.newArrayList();
+        cashBookService.findById(cashBookDto.getId()).ifPresent(
+                cashBook -> headers.addAll(headerRepository.findAllByCashBook(cashBook))
+        );
+        return headers;
+    }
+
+    public List<BudgetPositionTitle> findAllTitlesByHeader(BudgetPositionHeader header) {
+        return titleRepository.findAllByHeader(header);
+    }
+
+    public List<BudgetPositionPoint> findAllPointsByTitle(BudgetPositionTitle title) {
+        return pointRepository.findAllByTitle(title);
     }
 
 }
